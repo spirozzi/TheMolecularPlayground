@@ -16,9 +16,6 @@
 		"name": "Stephen Pirozzi",
 		"email": "spirozzi@umass.edu"
 	}],
-	# On `npm install TheMolecularPlayground`, a symlink named 'tmp-server' 
-	#  will be created in $prefix/bin and will map to index.js 
-	#  (the .js file that starts the server) for convenience
 	"bin": {
 		"tmp-server": "./index.js"
 	},
@@ -32,12 +29,9 @@
 	"bugs": {
 		"url": "https://github.com/spirozzi/TheMolecularPlayground/issues"
 	},
-	# TODO: Add test script, i.e. "test": "vows --spec --isolate"
 	"scripts": {
 		"start": "node index.js"
 	},
-	# The '^' character in front of the version number indicate that 
-	#  the only version supported is the version specified
 	"dependencies": {
 		"node-pre-gyp":		"^0.6.13",
 		"body-parser":		"^1.14.1",
