@@ -18,7 +18,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-// user-defined routes/middleware
+// user-defined routes
 var routehandler = require('./routes/routehandler');
 
 // TODO: add SQLite database JS interface
@@ -61,9 +61,6 @@ app.use(cookieParser());
 app.use('/', routehandler);
 //app.use('/otherroute', otherroutehandler);
 
-// TODO: use socket.io for parts of client/server interface?
-//var io = require('socket.io')(server);
-
 //////////////////////////////
 // Missing route handling code
 //////////////////////////////
@@ -101,7 +98,15 @@ app.use(function(err, req, res, next) {
 
 var server = app.listen(3000, function() {
   console.log('Listening on port %d', server.address().port);
-}); 
+});
+// initialize socket.io
+var io = require('socket.io')(server);
 
 // export the Express app
-module.exports = app;
+module.exports = {
+    'app': app,
+    'server' : server
+};
+
+// setup socket.io connection/event handler
+var socketio = require('./lib/sockethandler');
