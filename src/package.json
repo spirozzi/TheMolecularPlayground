@@ -30,8 +30,8 @@
 		"url": "https://github.com/spirozzi/TheMolecularPlayground/issues"
 	},
 	"scripts": {
-		"start_production_server": "NODE_ENV=production node index.js",
-		"start_development_server": "NODE_ENV=development node index.js"
+		"prestart": "export NODE_ENV=production",
+		"start": "node index.js"
 	},
 	"dependencies": {
 		"node-pre-gyp":		"^0.6.13",

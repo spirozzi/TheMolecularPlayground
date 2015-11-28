@@ -77,7 +77,7 @@ app.use(cookieparser());
 
 // start node server, which will listen on port 3000
 var server = app.listen(3000, function() {
-  console.log('Listening on port %d', server.address().port);
+    console.log('Listening on port %d', server.address().port);
 });
 // initialize socket.io 
 var io = require('socket.io')(server);
