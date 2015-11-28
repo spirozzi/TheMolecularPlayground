@@ -5,108 +5,86 @@
 // node.js web framework: Express
 var express	= require('express');
 
-// session support for Express
-var session	= require('express-session');
-
-// support to 'flash' data from one route to another
-var flash = require('connect-flash');
-
 // Express middleware:
-var path = require('path');
-var favicon	= require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+var path = require('path'); // join file path strings
+var morgan = require('morgan'); // HTTP request logger
+var session = require('express-session'); // session support
+var flash = require('connect-flash'); // session temp message storage support
+var cookieparser = require('cookie-parser');
+var bodyparser = require('body-parser');
+// other middleware:
+var favicon = require('serve-favicon'); // serve small icon to browser's URL bar
 
-// user-defined routes
+// set up user-defined routes
 var routehandler = require('./routes/routehandler');
 
-// TODO: add SQLite database JS interface
-//var db = require('./lib/db');
+// TODO: add SQLite database JS accessor
+//var db = require('./db/sqliteaccessor');
 
-//////////////////////////////////////////////
-// Express web app middleware setup and config
-//////////////////////////////////////////////
+//////////////////////////////////////////
+// Express app and middleware setup/config
+//////////////////////////////////////////
 
-// create the Express application
+// initialize the Express application
 var app	= express();
 
-// set up the dynamic view-rendering engine
-// @see ejs npm package
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+// set Express's 'env' variable based on the NODE_ENV env variable's value
+// the value of 'env' will be set to either 'production' or 'development'
+if (process.env.NODE_ENV === 'production') {
+    app.set('env', 'production');
+} else if (process.env,NODE_ENV === 'development') {
+    app.set('env', 'development');
+}
+// XXX: debug
+console.log(app.get('env'));
 
-// TODO: add favicon support
-// @see serve-favicon npm package
-//app.use(favicon(__dirname + '/public/img/favicon.ico'));
-
-// TODO: add logging support
-//app.use(logger('dev'));
-
-// automatically serve *.html pages in the ./public directory
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-
-// TODO: add session support
-//app.use(session({ secret: 'tmp-server', saveUninitialized: true,
-//	resave: true }));
-
-// TODO: add flash support
-// @see connect-flash npm package
-//app.use(flash());
-
-// route handling support
-app.use('/', routehandler);
-//app.use('/otherroute', otherroutehandler);
-
-//////////////////////////////
-// Missing route handling code
-//////////////////////////////
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-    var err = new Error('Not Found');
-    err.status = 404;
-    next(err);
-});
-
-// error handler for development; will print stack trace
+// log all HTTP requests to stdout if in development mode
 if (app.get('env') === 'development') {
-    app.use(function(err, req, res, next) {
-        res.status(err.status || 500);
-        res.render('error', {
-            message: err.message,
-            error: err
-        });
-    });
+    app.use(morgan('combined'));
+} else {
+    morgan = undefined;
 }
 
-// error handler for production; no stack traces leaked to client
-app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-        message: err.message,
-        error: {}
-    });
-});
+// set up the EJS view-rendering engine
+// @see ejs npm package
+app.set('views', path.join(__dirname, 'public/templates'));
+app.set('view engine', 'ejs');
+
+// set up custom route handling
+app.use('/', routehandler);
+
+// set up the body parser and the cookie parser
+app.use(bodyparser.json());
+app.use(bodyparser.urlencoded({ extended: false }));
+app.use(cookieparser());
+
+// TODO: set up favicon support
+// @see serve-favicon npm package
+//app.use(favicon(__dirname + 'public/img/favicon.ico'));
+
+// TODO: set up session support
+// @see express-session npm package
+//app.use(session({ secret: 'tmp-server', saveUninitialized: true, resave: true }));
+
+// TODO: set up flash support
+// when enabled, all reqs have req.flash(), sends temp msgs via sessions
+// @see connect-flash npm package
+//app.use(flash());
 
 //////////////////////
 // Server startup code
 //////////////////////
 
+// start node server, which will listen on port 3000
 var server = app.listen(3000, function() {
   console.log('Listening on port %d', server.address().port);
 });
-// initialize socket.io
+// initialize socket.io 
 var io = require('socket.io')(server);
 
-// export the Express app
-module.exports = {
-    'app': app,
-    'server' : server
-};
+// export the Express app and the Express server
+module.exports.app = app;
+module.exports.server = server;
 
-// setup socket.io connection/event handler
-var socketio = require('./lib/sockethandler');
+// setup socket.io connection handler/socket event handlers
+var socketio = require('./sockets/sockethandler');

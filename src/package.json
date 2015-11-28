@@ -1,7 +1,7 @@
 {
 	"name": "TheMolecularPlayground",
 	"version": "0.0.1",
-	"description": "A web server and interface to The Molecular Playground, a molecular and proteomic visualization program.",
+	"description": "A web server and interface to The Molecular Playground--a molecular and proteomic visualization program.",
 	"keywords": [
 		"molecular",
 		"playground",
@@ -30,7 +30,8 @@
 		"url": "https://github.com/spirozzi/TheMolecularPlayground/issues"
 	},
 	"scripts": {
-		"start": "node index.js"
+		"start_production_server": "NODE_ENV=production node index.js",
+		"start_development_server": "NODE_ENV=development node index.js"
 	},
 	"dependencies": {
 		"node-pre-gyp":		"^0.6.13",
@@ -45,6 +46,7 @@
 		"socket.io":		"^1.3.7",
 		"sqlite3":			"^3.1.0",
 		"morgan":			"^1.6.1",
-		"mocha":			"^2.3.3"
+		"mocha":			"^2.3.3",
+		"assert":			"^1.3.0"
 	}
 }
