@@ -16,9 +16,6 @@
 		"name": "Stephen Pirozzi",
 		"email": "spirozzi@umass.edu"
 	}],
-	"bin": {
-		"tmp-server": "./index.js"
-	},
 	"preferGlobal": true,
 	"private": true,
 	"license": "MIT",
@@ -30,8 +27,10 @@
 		"url": "https://github.com/spirozzi/TheMolecularPlayground/issues"
 	},
 	"scripts": {
-		"prestart": "export NODE_ENV=production",
-		"start": "node index.js"
+		"prerundevserver": "export NODE_ENV=development",
+		"rundevserver": "node index.js",
+		"prerunproductionserver": "export NODE_ENV=production",
+		"runproductionserver": "node index.js"
 	},
 	"dependencies": {
 		"node-pre-gyp":		"^0.6.13",

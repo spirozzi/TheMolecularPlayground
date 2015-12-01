@@ -5,13 +5,7 @@
 // import Express app and server from main JS file
 var express = require('../index.js');
 // add socket.io support to the Express app's server
-// XXX: debug
-if (express.server !== undefined) {
-	console.log('sockethandler.js: server exists');
-	console.log(express.server);
-}
-
-var io = require('socket.io')(express.server);
+var io = express.io;
 
 //////////////////////////////////////////////////////////////
 // Callback functions for socket event handlers
@@ -26,7 +20,7 @@ var request_description = function(socket, data) {
 	}
 	socket.emit('update-description', { text : "NewText" });
 };
-// XXX: ...
+
 
 // Event handler for clients' initial cxn to the server with socket.io
 io.on('connection', function(socket) {
@@ -34,5 +28,5 @@ io.on('connection', function(socket) {
 	socket.on('request-description', function(data) {
 		request_description(socket, data);
 	});
-	// XXX: ...
+
 });

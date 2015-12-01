@@ -32,11 +32,11 @@ var app	= express();
 // the value of 'env' will be set to either 'production' or 'development'
 if (process.env.NODE_ENV === 'production') {
     app.set('env', 'production');
-} else if (process.env,NODE_ENV === 'development') {
+} else if (process.env.NODE_ENV === 'development') {
     app.set('env', 'development');
 }
-// XXX: debug
-console.log(app.get('env'));
+// store the current 'env' variable
+var currenv = app.get('env');
 
 // log all HTTP requests to stdout if in development mode
 if (app.get('env') === 'development') {
@@ -67,7 +67,7 @@ app.use(cookieparser());
 //app.use(session({ secret: 'tmp-server', saveUninitialized: true, resave: true }));
 
 // TODO: set up flash support
-// when enabled, all reqs have req.flash(), sends temp msgs via sessions
+// when enabled, all reqs have req.flash(); sends temp msgs via sessions
 // @see connect-flash npm package
 //app.use(flash());
 
@@ -80,11 +80,14 @@ var server = app.listen(3000, function() {
     console.log('Listening on port %d', server.address().port);
 });
 // initialize socket.io 
-var io = require('socket.io')(server);
+var socketioinstance = require('socket.io')(server);
 
-// export the Express app and the Express server
-module.exports.app = app;
-module.exports.server = server;
+module.exports = {
+	app : app,
+	server : server,
+	io : socketioinstance,
+	env : currenv
+};
 
 // setup socket.io connection handler/socket event handlers
 var socketio = require('./sockets/sockethandler');

@@ -1,2 +1,4 @@
 src/node_modules
-
+./dev-server-out.log
+./prod-server-out.log
+./npm-debug.log
