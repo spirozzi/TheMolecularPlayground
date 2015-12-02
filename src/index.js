@@ -45,10 +45,13 @@ if (app.get('env') === 'development') {
     morgan = undefined;
 }
 
-// set up the EJS view-rendering engine
+// set up the EJS view-rendering engine (for serving HTML to browsers)
 // @see ejs npm package
 app.set('views', path.join(__dirname, 'public/templates'));
 app.set('view engine', 'ejs');
+
+// set up static file serving from "public" directory
+app.use(express.static('public'));
 
 // set up custom route handling
 app.use('/', routehandler);
