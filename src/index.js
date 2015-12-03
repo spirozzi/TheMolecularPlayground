@@ -82,7 +82,7 @@ app.use(cookieparser());
 var server = app.listen(3000, function() {
     console.log('Listening on port %d', server.address().port);
 });
-// initialize socket.io 
+// initialize socket.io
 var socketioinstance = require('socket.io')(server);
 
 module.exports = {
