@@ -1,1 +1,5 @@
-angular.module('app', ['nav','content'])
+(function() {
+
+  var app = angular.module('app', ['nav','content','user'])
+
+})();

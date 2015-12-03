@@ -1,3 +1,15 @@
+<!-- Modal Structure -->
+<div id="signinupModal" class="modal modal-fixed-footer">
+  <div class="modal-content">
+    <h4>Modal Header</h4>
+    <p>A bunch of text. A bunch of text. A bunch of text. A bunch of text. A bunch of text. A bunch of text. A bunch of text. A bunch of text</p>
+  </div>
+  <div class="modal-footer">
+    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Agree</a>
+  </div>
+</div>
+
+
 <!-- Navigation Menu -->
 <div class="container-fluid">
   <div class="row" style="margin-bottom:0 !important;">
@@ -6,8 +18,8 @@
         <div class="col s12">
           <!--<img src="assests/img/logo.png" class="circle" align="center" height="54px">     ng-repeat="(key, value) in nav.links"-->
           <a href="#" class="brand-logo">The Molecular Playground</a>
-          <ul id="nav-mobile" class="right hide-on-med-and-down" ng-repeat="link in (nav.get_links())">
-            <li><a ng-click='nav.signed_in = !nav.signed_in'>{{link.text}}</a></li>
+          <ul id="nav-mobile" class="right" ng-repeat="link in (nav.get_links())">
+            <li><a class="modal-trigger" href="#signinupModal">{{link.text}}</a></li>
           </ul>
         </div>
       </div>

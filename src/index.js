@@ -63,7 +63,7 @@ app.use(cookieparser());
 
 // TODO: set up favicon support
 // @see serve-favicon npm package
-//app.use(favicon(__dirname + 'public/img/favicon.ico'));
+app.use(favicon(__dirname + 'assets/img/favicon.ico'));
 
 // TODO: set up session support
 // @see express-session npm package
