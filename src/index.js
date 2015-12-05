@@ -41,7 +41,7 @@ var currenv = app.get('env');
 // log all HTTP requests to stdout if in development mode
 if (app.get('env') === 'development') {
     app.use(morgan('combined'));
-} else {
+} else if (app.get('env') === 'production') {
     morgan = undefined;
 }
 
@@ -53,13 +53,13 @@ app.set('view engine', 'ejs');
 // set up static file serving from "public" directory
 app.use(express.static('public'));
 
-// set up custom route handling
-app.use('/', routehandler);
-
 // set up the body parser and the cookie parser
 app.use(bodyparser.json());
-app.use(bodyparser.urlencoded({ extended: false }));
+app.use(bodyparser.urlencoded({ extended: true }));
 app.use(cookieparser());
+
+// set up custom route handling
+app.use('/', routehandler);
 
 // TODO: set up favicon support
 // @see serve-favicon npm package
@@ -80,7 +80,7 @@ app.use(cookieparser());
 
 // start node server, which will listen on port 3000
 var server = app.listen(3000, function() {
-    console.log('Listening on port %d', server.address().port);
+    console.log('Server started. Listening on port %d', server.address().port);
 });
 // initialize socket.io 
 var socketioinstance = require('socket.io')(server);
@@ -93,4 +93,6 @@ module.exports = {
 };
 
 // setup socket.io connection handler/socket event handlers
+// sockethandler.js will modify the exported 'io' socket.io instance to 
+//  add socket connection and event handlers
 var socketio = require('./sockets/sockethandler');
