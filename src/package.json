@@ -27,10 +27,8 @@
 		"url": "https://github.com/spirozzi/TheMolecularPlayground/issues"
 	},
 	"scripts": {
-		"prerundevserver": "export NODE_ENV=development",
-		"rundevserver": "node index.js",
-		"prerunproductionserver": "export NODE_ENV=production",
-		"runproductionserver": "node index.js"
+		"rundevserver": "export NODE_ENV=development && node index.js",
+		"runproductionserver": "export NODE_ENV=production && node index.js"
 	},
 	"dependencies": {
 		"node-pre-gyp":		"^0.6.13",

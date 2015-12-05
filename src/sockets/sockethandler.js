@@ -3,30 +3,31 @@
 ////////////////////////////////////////////////
 
 // import Express app and server from main JS file
-var express = require('../index.js');
-// add socket.io support to the Express app's server
-var io = express.io;
+var expressapp = require('../index.js');
+// modify socket.io support to the Express app's (index.js) server
+var socketio = expressapp.io;
 
 //////////////////////////////////////////////////////////////
 // Callback functions for socket event handlers
 // Variable names correspond to names of socket event handlers
 //////////////////////////////////////////////////////////////
 
-var request_description = function(socket, data) {
-	// XXX: debug
-	if (socket === undefined) {
-		console.log("request_description: socket is null");
-		return;
-	}
-	socket.emit('update-description', { text : "NewText" });
+/*
+function requestDescription(socket, data) {
+	socket.emit('update-description', { text : "Text Set by WebSocket" });
 };
+*/
 
-
+//////////////////////////////////////////////////////////////////////
 // Event handler for clients' initial cxn to the server with socket.io
-io.on('connection', function(socket) {
-	// Event handlrs for sockets
-	socket.on('request-description', function(data) {
-		request_description(socket, data);
-	});
+//////////////////////////////////////////////////////////////////////
 
+socketio.on('connection', function(socket) {
+	// Event handlers for sockets
+	/*
+	socket.on('request-description', function(data) {
+		requestDescription(socket, data);
+	});
+	*/
+	// ...
 });
