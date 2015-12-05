@@ -10,8 +10,8 @@ nav.controller('navCntrl', ['$scope', function($scope) {
     {text:'home',action:'link'}
   ];
   var out_links = [
-    {text:'sign up',action:"onclick=$('#signinupModal').openModal();"},
-    {text:'log in',action:"onclick=$('#signinupModal').openModal();"}
+    {text:'sign up',action:"nav.showSignInUpModal()"},
+    {text:'log in',action:"showSignInUpModal"}
   ];
 
   this.sign_in = function(){
@@ -21,6 +21,30 @@ nav.controller('navCntrl', ['$scope', function($scope) {
   this.get_links = function(){
     if (this.signed_in) return in_links;
     else return out_links;
+  };
+
+  this.showSignInUpModal = function(){
+    console.log("test");
+  }
+
+  this.call_function = function(string){
+    if(angular.isFunction(this[name]))
+      this[string]();
+    else {
+      console.log(string);
+    }
+  }
+
+
+  this.getAction = function(idx){
+    var links = this.get_links();
+    var action = links[idx].action;
+    return action
+  };
+
+  this.showSignInUpModal = function(){
+    console.log("showing");
+    $('#signinupModal').openModal();
   };
 }]);
 

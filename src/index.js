@@ -61,9 +61,10 @@ app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(cookieparser());
 
+// I PUT THIS IN INDEX.ejs
 // TODO: set up favicon support
 // @see serve-favicon npm package
-app.use(favicon(__dirname + 'assets/img/favicon.ico'));
+// app.use(favicon(__dirname + 'assets/img/favicon.ico'));
 
 // TODO: set up session support
 // @see express-session npm package
