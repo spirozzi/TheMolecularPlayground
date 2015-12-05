@@ -58,13 +58,10 @@ app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(cookieparser());
 
-<<<<<<< HEAD
-// I PUT THIS IN INDEX.ejs
-=======
+
 // set up custom route handling
 app.use('/', routehandler);
 
->>>>>>> 8b8f59a075c84beeac367ba87247ef3d9661167d
 // TODO: set up favicon support
 // @see serve-favicon npm package
 // app.use(favicon(__dirname + 'assets/img/favicon.ico'));
@@ -97,6 +94,6 @@ module.exports = {
 };
 
 // setup socket.io connection handler/socket event handlers
-// sockethandler.js will modify the exported 'io' socket.io instance to 
+// sockethandler.js will modify the exported 'io' socket.io instance to
 //  add socket connection and event handlers
 var socketio = require('./sockets/sockethandler');
