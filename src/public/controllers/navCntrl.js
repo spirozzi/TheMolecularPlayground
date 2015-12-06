@@ -10,8 +10,8 @@ nav.controller('navCntrl', ['$scope', function($scope) {
     {text:'home',action:'link'}
   ];
   var out_links = [
-    {text:'sign up',action:"nav.showSignInUpModal()"},
-    {text:'log in',action:"showSignInUpModal"}
+    {text:'Sign Up',action:"openSignInUpModal()"},
+    {text:'Log In',action:"openSignInUpModal()"}
   ];
 
   this.sign_in = function(){
