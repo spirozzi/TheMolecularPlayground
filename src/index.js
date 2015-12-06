@@ -10,10 +10,7 @@ var path = require('path'); // join file path strings
 var morgan = require('morgan'); // HTTP request logger
 var session = require('express-session'); // session support
 var flash = require('connect-flash'); // session temp message storage support
-var cookieparser = require('cookie-parser');
-var bodyparser = require('body-parser');
-// other middleware:
-var favicon = require('serve-favicon'); // serve small icon to browser's URL bar
+var bodyparser = require('body-parser'); // parses/stores request elements in req.body
 
 // set up user-defined routes
 var routehandler = require('./routes/routehandler');
@@ -53,22 +50,31 @@ app.set('view engine', 'ejs');
 // set up static file serving from "public" directory
 app.use(express.static('public'));
 
-// set up the body parser and the cookie parser
+// set up the body parser
 app.use(bodyparser.json());
-app.use(bodyparser.urlencoded({ extended: true }));
-app.use(cookieparser());
-
+app.use(bodyparser.urlencoded({
+	extended: true 
+}));
 
 // set up custom route handling
 app.use('/', routehandler);
 
 // set up session support
 // @see express-session npm package
-//app.use(session({ secret: '238620496820', saveUninitialized: true, resave: true }));
-
-// TODO: set up favicon support
-// @see serve-favicon npm package
-// app.use(favicon(__dirname + 'assets/img/favicon.ico'));
+app.use(session({
+	genid: function(req) {
+		return genuuid(); // UUIDs will be used for session IDs
+	},
+	secret: '238620496820',
+	saveUninitialized: false,
+	resave: false,
+	rolling: true,
+	unset: 'destroy',
+	cookie: {
+		secure: false,
+		maxAge: null, // cookie is a "session cookie" and expires when browser is closed
+	}
+}));
 
 // TODO: set up flash support
 // when enabled, all reqs have req.flash(); sends temp msgs via sessions

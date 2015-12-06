@@ -17,7 +17,6 @@ var db = new sqlite3.Database(DB_FILE,
 		if (err !== null) {
 			// database could not be opened
 			console.log('error: the SQLite3 database could not be created and/or opened, exiting');
-			// fatal error, exit
 			process.exit(1);
 		}
 	});
@@ -63,9 +62,7 @@ var addUser = function(user, cb) {
 			release();
 		});
 		lock.writeLock(function(release) {
-			console.log('enter statement writelock');
 			lock.readLock(function(release) {
-				console.log('enter statement readlock');
 				firstname = user.getFirstName();
 				lastname = user.getLastName();
 				email = user.getEmail();
@@ -73,17 +70,19 @@ var addUser = function(user, cb) {
 				userkey = 'myuserkey';
 				username = user.getUsername();
 				phonenumber = user.getPhoneNumber();
-				db.run('INSERT INTO users VALUES ($nextuid, $firstname, $lastname, $email, $permissionlevel, $userkey, $username, $phonenumber)', 
+				db.run('INSERT INTO users VALUES ($nextuid, $firstname, $lastname, $email, $permissionlevel, $userkey, $username, $phonenumber, $password)', 
 					{
-						$nextuid : nextuid,
-						$firstname : firstname,
-						$lastname : lastname,
-						$email : email,
-						$permissionlevel : permissionlevel,
-						$userkey : userkey,
-						$username : username,
-						$phonenumber : phonenumber
-					}, function(err) {
+						$nextuid: nextuid,
+						$firstname: firstname,
+						$lastname: lastname,
+						$email: email,
+						$permissionlevel: permissionlevel,
+						$userkey: userkey,
+						$username: username,
+						$phonenumber: phonenumber,
+						$password: password
+					},
+					function(err) {
 						cb(err);
 					});
 				release();
@@ -103,24 +102,22 @@ function createTables(cb) {
 			permissionlevel INTEGER NOT NULL,\
 			userkey BLOB,\
 			username TEXT NOT NULL,\
-			phonenumber TEXT NOT NULL\
-			)', [],
+			phonenumber TEXT NOT NULL,\
+			password TEXT NOT NULL)', 
+			[],
 			function(err) {
 				cb(err);
 			});
-		// ... TODO: create other tables
+		// TODO: create other tables
 	});
 }
 
 function generateNextUid() {
 	lock.writeLock(function(release) {
-		console.log('enter writelock 2');
 		db.serialize(function() {
 			lock.writeLock(function(release) {
-				console.log('enter writelock 3');
 				db.get('SELECT MAX(uid) FROM users', [], function(err, row) {
 					lock.writeLock(function(release) {
-						console.log('enter writelock 4');
 						if (row !== undefined) {
 							setNextUid(row.uid + 1);
 						} else if (err === null) {
@@ -145,7 +142,7 @@ function setNextUid(uid) {
 }
 
 module.exports = {
-	initialize : initialize,
-	addUser : addUser,
-	close : close
+	initialize: initialize,
+	addUser: addUser,
+	close: close
 };

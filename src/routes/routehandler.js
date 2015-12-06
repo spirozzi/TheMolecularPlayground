@@ -27,19 +27,15 @@ router.get('/index', function(req, res) {
 	res.render('index');
 });
 
-// XXX user creation page route for testing db
-router.get('/signup', function(req, res) {
-    res.render('signup');
-});
-
 router.post('/usersignup', function(req, res) {
     var firstname = req.body.firstname;
     var lastname = req.body.lastname;
     var email = req.body.email;
     var username = req.body.username;
     var phonenumber = req.body.phonenumber;
+    var password = req.body.password;
     console.log('Adding new user to database...');
-    var user = new User(firstname, lastname, email, username, phonenumber);
+    var user = new User(firstname, lastname, email, username, phonenumber, password);
     db.initialize(function(err) {
         if (err !== null) {
             console.log('error: could not initialize database, exiting');
