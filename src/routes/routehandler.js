@@ -31,6 +31,7 @@ router.get('/index', function(req, res) {
 router.get('/signup', function(req, res) {
     res.render('signup');
 });
+
 router.post('/usersignup', function(req, res) {
     var firstname = req.body.firstname;
     var lastname = req.body.lastname;
@@ -55,15 +56,6 @@ router.post('/usersignup', function(req, res) {
             process.exit(1);
         } else {
             console.log('Added new user to database');
-        }
-    });
-    db.close(function(err) {
-        if (err !== null) {
-            console.log('error: could not close database, exiting');
-            console.log(err);
-            process.exit(1);
-        } else {
-            console.log('Closed database successfully')
         }
     });
     res.redirect('index');

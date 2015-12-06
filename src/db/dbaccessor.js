@@ -1,9 +1,17 @@
+// name of database. constant value
+const DB_FILE = '../database.db';
 // require the sqlite3 package and turn on the verbose option to print 
 //  detailed stack traces
 var sqlite3 = require('sqlite3').verbose();
+// require the fs package to check if files exist
+var fs = require('fs');
+// require the rwlock package to use read/write locks
+var ReadWriteLock = require('rwlock');
+// default read/write lock
+var lock = new ReadWriteLock();
 
 // create a new Database object and open the db for create/read/write operations
-var db = new sqlite3.Database('../database.db', 
+var db = new sqlite3.Database(DB_FILE, 
 	sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
 	function(err) {
 		if (err !== null) {
@@ -13,6 +21,8 @@ var db = new sqlite3.Database('../database.db',
 			process.exit(1);
 		}
 	});
+// the uid that will be assigned to the next user added to the database
+var nextuid;
 
 /*
 Asynchronously creates any missing tables in the database to initialize it. If 
@@ -20,7 +30,16 @@ Asynchronously creates any missing tables in the database to initialize it. If
  argument null, otherwise cb is called with a non-null argument.
 */
 var initialize = function(cb) {
-	createTables(cb);
+	try {
+		var dbstats = fs.lstatSync(DB_FILE);
+		if (!dbstats.isFile()) {
+			createTables(cb);
+		}
+	} catch (e) {
+		console.log('error: database existence check failed, exiting');
+		console.log(e);
+		process.exit(1);
+	}
 };
 
 /* 
@@ -30,21 +49,47 @@ Asynchronously closes the database connection. If the database is successfully
  @params cb	A function with one parameter 
 */
 var close = function(cb) {
-	db.close(cb);
+	db.serialize(function() {
+		db.close(cb);
+	});
 };
 
 var addUser = function(user, cb) {
 	db.serialize(function() {
-		var stmt = db.prepare('INSERT INTO users VALUES (?)');
-		stmt.run(1);
-		stmt.run(user.getFirstName());
-		stmt.run(user.getLastName());
-		stmt.run(user.getEmail());
-		stmt.run(1);
-		stmt.run('newuserkey');
-		stmt.run(user.getUsername());
-		stmt.run(user.getPhoneNumber());
-		stmt.finalize();
+		lock.writeLock(function(release) {
+			console.log('enter writelock 1');
+			// write nextuid variable
+			generateNextUid();
+			release();
+		});
+		lock.writeLock(function(release) {
+			console.log('enter statement writelock');
+			lock.readLock(function(release) {
+				console.log('enter statement readlock');
+				firstname = user.getFirstName();
+				lastname = user.getLastName();
+				email = user.getEmail();
+				permissionlevel = 1;
+				userkey = 'myuserkey';
+				username = user.getUsername();
+				phonenumber = user.getPhoneNumber();
+				db.run('INSERT INTO users VALUES ($nextuid, $firstname, $lastname, $email, $permissionlevel, $userkey, $username, $phonenumber)', 
+					{
+						$nextuid : nextuid,
+						$firstname : firstname,
+						$lastname : lastname,
+						$email : email,
+						$permissionlevel : permissionlevel,
+						$userkey : userkey,
+						$username : username,
+						$phonenumber : phonenumber
+					}, function(err) {
+						cb(err);
+					});
+				release();
+			});
+			release();
+		});
 	});
 };
 
@@ -63,8 +108,40 @@ function createTables(cb) {
 			function(err) {
 				cb(err);
 			});
-		// ... create other tables
+		// ... TODO: create other tables
 	});
+}
+
+function generateNextUid() {
+	lock.writeLock(function(release) {
+		console.log('enter writelock 2');
+		db.serialize(function() {
+			lock.writeLock(function(release) {
+				console.log('enter writelock 3');
+				db.get('SELECT MAX(uid) FROM users', [], function(err, row) {
+					lock.writeLock(function(release) {
+						console.log('enter writelock 4');
+						if (row !== undefined) {
+							setNextUid(row.uid + 1);
+						} else if (err === null) {
+							setNextUid(1);
+						} else {
+							console.log('error: could not read users database table, exiting');
+							console.log(err);
+							process.exit(1);
+						}
+						release();
+					});
+					release();
+				});
+			});
+			release();
+		});
+	});
+}
+
+function setNextUid(uid) {
+	nextuid = uid;
 }
 
 module.exports = {
