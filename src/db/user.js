@@ -1,11 +1,12 @@
 var methods = User.prototype;
 
-function User(firstname, lastname, email, username, phonenumber) {
+function User(firstname, lastname, email, username, phonenumber, password) {
 	this._firstname = firstname;
 	this._lastname = lastname;
 	this._email = email;
 	this._username = username;
 	this._phonenumber = phonenumber;
+	this._password = password;
 }
 
 methods.getFirstName = function() {
@@ -26,6 +27,10 @@ methods.getUsername = function() {
 
 methods.getPhoneNumber = function() {
 	return this._phonenumber;
+};
+
+methods.getPassword = function() {
+	return this._password;
 };
 
 module.exports = User;
