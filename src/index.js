@@ -62,13 +62,13 @@ app.use(cookieparser());
 // set up custom route handling
 app.use('/', routehandler);
 
+// set up session support
+// @see express-session npm package
+//app.use(session({ secret: '238620496820', saveUninitialized: true, resave: true }));
+
 // TODO: set up favicon support
 // @see serve-favicon npm package
 // app.use(favicon(__dirname + 'assets/img/favicon.ico'));
-
-// TODO: set up session support
-// @see express-session npm package
-//app.use(session({ secret: 'tmp-server', saveUninitialized: true, resave: true }));
 
 // TODO: set up flash support
 // when enabled, all reqs have req.flash(); sends temp msgs via sessions
