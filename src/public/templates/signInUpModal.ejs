@@ -1,0 +1,58 @@
+<!-- Modal Structure -->
+<div id="signinupModal" class="modal modal-fixed-footer">
+  <form id="signupform" action="usersignup" method="post" accept-charset="UTF-8">
+    <div class="modal-content">
+      <h4>{{type}}</h4>
+
+      <div class="container">
+        <div class="row">
+          <div class="input-field col m12">
+            <input id="firstnameinput" type="text" name="firstname">
+            <label for="firstnameinput">First Name</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="input-field col m12">
+            <input id="lastnameinput" type="text" name="lastname">
+            <label for="lastnameinput">Last Name</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="input-field col m12">
+            <input id="emailinput" type="text" name="email">
+            <label for="emailinput">Email</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="input-field col m12">
+            <input id="phonenumberinput" type="text" name="phonenumber">
+            <label for="phonenumberinput">Phone Number</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="input-field col m12">
+            <input id="usernameinput" type="text" name="username">
+            <label for="usernameinput">Desired username</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="input-field col m12">
+            <input id="passwordinput" type="text" name="password">
+            <label for="passwordinput">Password</label>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+    <div class="modal-footer z-depth-2">
+      <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+    </button>
+    </div>
+  </form>
+</div>
