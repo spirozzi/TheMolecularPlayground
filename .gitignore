@@ -1,4 +1,9 @@
+node_modules
 src/node_modules
+src/npm-debug.log
 ./dev-server-out.log
 ./prod-server-out.log
 ./npm-debug.log
+dev-server-out.log
+prod-server-out.log
+npm-debug.log
