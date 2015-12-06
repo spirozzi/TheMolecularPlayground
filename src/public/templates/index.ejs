@@ -1,22 +1,54 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="app">
 <head>
 	<title>The Molecular Playground - Home Page</title>
-	<script type="stylesheet" src="lib/materialize/css/materialize.min.css"></script>
+	<link rel="stylesheet" href="lib/materialize/css/materialize.css"></link>
+
+	<!-- this seems ridiculous, and it is. I addec ever single icon for all browsers, modile apps, etc. -->
+	<!-- ALSO ALWAYS PUT JAVASCRIPT INLCUDES AT THE BOTTOM OF THE PAGE SO LOAD TIME ISN"T FUCKED -->
+	<link rel="apple-touch-icon" sizes="57x57" href="assests/img/favicons/apple-touch-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="assests/img/favicons/apple-touch-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="assests/img/favicons/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="assests/img/favicons/apple-touch-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="assests/img/favicons/apple-touch-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="assests/img/favicons/apple-touch-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="assests/img/favicons/apple-touch-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="assests/img/favicons/apple-touch-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="assests/img/favicons/apple-touch-icon-180x180.png">
+	<link rel="icon" type="image/png" href="assests/img/favicons/favicon-32x32.png" sizes="32x32">
+	<link rel="icon" type="image/png" href="assests/img/favicons/android-chrome-192x192.png" sizes="192x192">
+	<link rel="icon" type="image/png" href="assests/img/favicons/favicon-96x96.png" sizes="96x96">
+	<link rel="icon" type="image/png" href="assests/img/favicons/favicon-16x16.png" sizes="16x16">
+	<link rel="manifest" href="assests/img/favicons/manifest.json">
+	<link rel="mask-icon" href="assests/img/favicons/safari-pinned-tab.svg" color="#5bbad5">
+	<meta name="apple-mobile-web-app-title" content="Molecular Playground">
+	<meta name="application-name" content="Molecular Playground">
+	<meta name="msapplication-TileColor" content="#da532c">
+	<meta name="msapplication-TileImage" content="/mstile-144x144.png">
+	<meta name="theme-color" content="#ffffff">
+
 </head>
-<body>
+<body class="blue-grey lighten-4">
+	<!-- All the content we need, should be intuitive. Otherwise talk to Carter, angularJS does make some odd DOM pages -->
 
-	<h1>The Molecular Playground</h1>
-	<h2>Home Page</h2>
-	<h3>The Molecular Playground allows the general public to interact with molecules in a natural way. The Playground makes complex concepts in chemistry (such as molecular structure) more accessible to the general public.</h3>
-	<h4 id="description">Default</h4>
+	<navbar></navbar> <!-- the nav menu -->
+	<content></content> <!-- content that we will display (prolly need to work with stephen to figure out how this workflow is functioning) -->
 
+<script type="text/javascript" src="lib/jquery/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="lib/socketio/socket.io-1.3.7.js"></script>
+<script type="text/javascript" src="lib/materialize/js/materialize.min.js"></script>
+<script type="text/javascript" src="lib/angularjs/angular.min.js"></script>
+<script type="text/javascript" src="app.js"></script>
+<script type="text/javascript" src="controllers/navCntrl.js"></script>
+<script type="text/javascript" src="controllers/contentCntrl.js"></script>
+<script type="text/javascript" src="controllers/userCntrl.js"></script>
 
-	<script type="text/javascript" src="lib/jquery/jquery-2.1.4.min.js"></script>
-	<script type="text/javascript" src="lib/socketio/socket.io-1.3.7.js"></script>
-	<script type="text/javascript" src="lib/angularjs/angular.min.js"></script>
-	<script type="text/javascript" src="lib/materialize/js/materialize.min.js"></script>
-
-	<script type="text/javascript" src="clientjs/index_client.js"></script>
+<script type="text/javascript" src="clientjs/index_client.js"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		// the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+		$('.modal-trigger').leanModal();
+	});
+</script>
 </body>
 </html>

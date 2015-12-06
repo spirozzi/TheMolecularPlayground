@@ -58,12 +58,13 @@ app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(cookieparser());
 
+
 // set up custom route handling
 app.use('/', routehandler);
 
 // TODO: set up favicon support
 // @see serve-favicon npm package
-//app.use(favicon(__dirname + 'public/img/favicon.ico'));
+// app.use(favicon(__dirname + 'assets/img/favicon.ico'));
 
 // TODO: set up session support
 // @see express-session npm package
@@ -82,7 +83,7 @@ app.use('/', routehandler);
 var server = app.listen(3000, function() {
     console.log('Server started. Listening on port %d', server.address().port);
 });
-// initialize socket.io 
+// initialize socket.io
 var socketioinstance = require('socket.io')(server);
 
 module.exports = {
@@ -93,6 +94,6 @@ module.exports = {
 };
 
 // setup socket.io connection handler/socket event handlers
-// sockethandler.js will modify the exported 'io' socket.io instance to 
+// sockethandler.js will modify the exported 'io' socket.io instance to
 //  add socket connection and event handlers
 var socketio = require('./sockets/sockethandler');
