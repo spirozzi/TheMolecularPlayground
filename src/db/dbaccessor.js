@@ -32,6 +32,7 @@ var initialize = function(cb) {
 	try {
 		var dbstats = fs.lstatSync(DB_FILE);
 		if (!dbstats.isFile()) {
+			// create database file and tables if it does not already exist
 			createTables(cb);
 		}
 	} catch (e) {
@@ -41,22 +42,9 @@ var initialize = function(cb) {
 	}
 };
 
-/* 
-Asynchronously closes the database connection. If the database is successfully
- closed, cb is called with the argument null, otherwise cb is called with a 
- non-null argument.
- @params cb	A function with one parameter 
-*/
-var close = function(cb) {
-	db.serialize(function() {
-		db.close(cb);
-	});
-};
-
 var addUser = function(user, cb) {
 	db.serialize(function() {
 		lock.writeLock(function(release) {
-			console.log('enter writelock 1');
 			// write nextuid variable
 			generateNextUid();
 			release();
@@ -70,6 +58,7 @@ var addUser = function(user, cb) {
 				userkey = 'myuserkey';
 				username = user.getUsername();
 				phonenumber = user.getPhoneNumber();
+				password = user.getPassword();
 				db.run('INSERT INTO users VALUES ($nextuid, $firstname, $lastname, $email, $permissionlevel, $userkey, $username, $phonenumber, $password)', 
 					{
 						$nextuid: nextuid,
@@ -91,6 +80,78 @@ var addUser = function(user, cb) {
 		});
 	});
 };
+
+var logUserIn = function(user, cb) {
+	var username = user.getUsername();
+	var password = user.getPassword();
+	// get uid of user
+	var uid;
+	var setUid = function(val) {
+		uid = val;
+	};
+	lock.writeLock(function(release) {
+		getUserUid(username, setUid)
+		release();
+	});
+	lock.writeLock(function(release) {
+		lock.readLock(function(release) {
+			if (uid === undefined) {
+				cb('user does not exist');
+			} else {
+
+			}
+			release();
+		});
+		release();
+	});
+};
+
+/* 
+Asynchronously closes the database connection. If the database is successfully
+ closed, cb is called with the argument null, otherwise cb is called with a 
+ non-null argument.
+ @params cb	A function with one parameter 
+*/
+var close = function(cb) {
+	lock.writeLock(function(release) {
+		db.serialize(function() {
+			lock.writeLock(function(release) {
+				db.close(cb);
+				release();
+			});
+		});
+		release();
+	});
+};
+
+function getUserUid(uid, cbSetUid) {
+	lock.writeLock(function(release) {
+		db.serialize(function() {
+			lock.writeLock(function(release) {
+				db.get('SELECT * FROM users WHERE uid=$uid',
+					{ $uid: uid },
+					function(err, row) {
+						lock.writeLock(function(release) {
+							if (row !== undefined) {
+								// row containing user with specified uid found
+								cbSetUid(row.uid);
+							} else if (err === null) {
+								// no user with specified uid found and no error
+								cbSetUid(undefined);
+							} else {
+								// error
+								console.log('error: failed to query db to find user with specified uid');
+								console.log(err);
+							}
+							release();
+						});
+					});
+				release();
+			});
+		});
+		release();
+	});
+}
 
 function createTables(cb) {
 	db.serialize(function() {
@@ -119,10 +180,13 @@ function generateNextUid() {
 				db.get('SELECT MAX(uid) FROM users', [], function(err, row) {
 					lock.writeLock(function(release) {
 						if (row !== undefined) {
+							// row with largest uid returned
 							setNextUid(row.uid + 1);
 						} else if (err === null) {
+							// no users in table yet and no error
 							setNextUid(1);
 						} else {
+							// error
 							console.log('error: could not read users database table, exiting');
 							console.log(err);
 							process.exit(1);
@@ -144,5 +208,6 @@ function setNextUid(uid) {
 module.exports = {
 	initialize: initialize,
 	addUser: addUser,
+	logUserIn: logUserIn,
 	close: close
 };

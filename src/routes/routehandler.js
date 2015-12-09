@@ -57,6 +57,20 @@ router.post('/usersignup', function(req, res) {
     res.redirect('index');
 });
 
+router.post('/userlogin', function(req, res) {
+    var username = req.body.username;
+    var password = req.body.password;
+    var user = new User(null, null, null, username, null, password);
+    db.logUserIn(user, function (err) {
+        if (err !== null) {
+            console.log('routehander.js: could not log user in');
+            res.render('error', { message: 'Error: Could not log in'});
+        } else {
+            res.redirect('index');
+        }
+    });
+});
+
 //////////////////////////////////////////////
 // Route handling code for non-existent routes
 //////////////////////////////////////////////
