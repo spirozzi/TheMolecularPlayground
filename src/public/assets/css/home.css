@@ -1,0 +1,31 @@
+.card-btn{
+    padding: .5em;
+    background-color:#ECEFF1;
+    transition: all .5s;
+    cursor: pointer;
+ }
+
+.card-btn:hover{
+   padding: .5em;
+   background-color:#2196F3;
+}
+.card-btn > h3{
+  color:#000000;
+  transition: all .5s;
+}
+.card-btn > h6{
+  color:#2196F3;
+  transition: all .5s;
+}
+.card-btn:hover > h3{
+  color:#FFFFFF;
+}
+.card-btn:hover > h6{
+  color:#FFFFFF;
+}
+.btn-holder:first-of-type{
+   margin-top: 2em;
+}
+.btn-holder:last-of-type{
+   margin-bottom: 2em;
+}

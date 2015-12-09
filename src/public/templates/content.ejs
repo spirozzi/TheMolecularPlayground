@@ -1,10 +1,3 @@
-<div class="container-fuild">
-  <div class="row">
-    <div class="col m12">
-      <div class="row white z-depth-1">
-        <h3>Gallery</h3>
-
-
-      </div>
-    </div>
-  </div>
+<gallery ng-if="!logged_in || (logged_in && view == 'Gallery')"></gallery>
+<home ng-if="logged_in && view == 'Home'"></home>
+<account ng-if="logged_in && view == 'Account'"></account>
