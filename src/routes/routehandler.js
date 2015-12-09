@@ -58,14 +58,37 @@ router.post('/usersignup', function(req, res) {
 });
 
 router.post('/userlogin', function(req, res) {
+    console.log('routehandler.js: post(/userlogin... route invoked');
     var username = req.body.username;
     var password = req.body.password;
+    if (!username || !password) {
+        console.log('routehander.js: username or password is undefined');
+        res.render('error', { message: 'Error: Could not log in'});
+    }
     var user = new User(null, null, null, username, null, password);
+    db.initialize(function(err) {
+        if (err !== null) {
+            console.log('error: could not initialize database, exiting');
+            console.log(err);
+            process.exit(1);
+        } else {
+            console.log('Database initialization successful');
+        }
+    });
     db.logUserIn(user, function (err) {
         if (err !== null) {
             console.log('routehander.js: could not log user in');
+            console.log(err);
             res.render('error', { message: 'Error: Could not log in'});
         } else {
+            if (!req.sessionID) {
+                console.log('routehandler.js: could not log user in, session ID undefined, exiting');
+                process.exit(1);
+            }
+            mainapp.addLoggedInUser({
+                user: username,
+                id: req.sessionID
+            });
             res.redirect('index');
         }
     });
