@@ -2,7 +2,7 @@
 <div id="signinupModal" class="modal modal-fixed-footer">
 
   <!-- SIGN UP MODAL-->
-  <form ng-if="type === 'Sign Up'" id="signupform" action="usersignup" method="post" accept-charset="UTF-8">
+  <form ng-if="type === 'Sign Up'" id="signupform" > <!-- action="usersignup" method="post" accept-charset="UTF-8" -->
     <div class="modal-content">
       <h4>{{type}}</h4>
       <div class="container">
@@ -45,14 +45,14 @@
       </div>
     </div>
     <div class="modal-footer z-depth-2">
-      <button class="btn waves-effect waves-light blue" type="submit" name="action">
-        Submit
+      <button class="btn waves-effect waves-light blue" type="submit" name="action" ng-click="signInUp('signup')">
+        Sign Up
       </button>
     </div>
   </form>
 
   <!-- LOG IN FORM -->
-  <form ng-if="type === 'Log In'" id="logform" action="userlogin" method="post" accept-charset="UTF-8">
+  <form ng-if="type === 'Log In'" id="logform" > <!--  action="userlogin" method="post" accept-charset="UTF-8" -->
     <div class="modal-content">
       <h4>{{type}}</h4>
 
@@ -71,8 +71,8 @@
         </div>
     </div>
     <div class="modal-footer z-depth-2">
-      <button class="btn waves-effect waves-light blue" type="submit" name="action">
-        Submit
+      <button class="btn waves-effect waves-light blue" type="submit" name="action" ng-click="signInUp('login')">
+        Log In
       </button>
     </div>
   </form>

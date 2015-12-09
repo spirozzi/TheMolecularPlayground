@@ -2,3 +2,9 @@
   max-width: 50%;
   height:auto;
 }
+.nav-link{
+  cursor: pointer;
+}
+.spacer{
+  height:1.5em;
+}

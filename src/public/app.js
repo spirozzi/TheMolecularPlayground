@@ -1,7 +1,7 @@
 (function() {
 
   var app = angular.module('app', [
-    'nav','content','user'
+    'nav','content'
   ])
 
   app.directive('content', function() {

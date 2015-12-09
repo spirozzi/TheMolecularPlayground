@@ -1,5 +1,5 @@
 <!-- Navigation Menu -->
-<div class="container-fluid">
+<div class="container-fluid navbar-fixed">
   <div class="row" style="margin-bottom:0 !important;">
     <nav class="blue">
       <div class="nav-wrapper">
@@ -8,8 +8,8 @@
         <!--<img src="assests/img/logo.png" class="circle" align="center" height="54px">     ng-repeat="(key, value) in nav.links"-->
         <a href="#" class="brand-logo">The Molecular Playground</a>
         <ul id="nav-mobile" class="right">
-          <li ng-repeat="link in (get_links(logged_in))">
-            <a class="modal-trigger" ng-click="openSignInUpModal(link.text)">{{link.text}}</a>
+          <li ng-class="view == link.text ? 'active nav-link' : 'nav-link'" ng-repeat="link in (get_links(logged_in))">
+            <a class="modal-trigger" ng-click="handleNavigation(link.text)">{{link.text}}</a>
           </li>
         </ul>
       </div>
