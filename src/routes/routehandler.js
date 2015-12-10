@@ -28,6 +28,7 @@ router.get('/index', function(req, res) {
 });
 
 router.post('/usersignup', function(req, res) {
+		console.log('signup');
     var firstname = req.body.firstname;
     var lastname = req.body.lastname;
     var email = req.body.email;

@@ -2,7 +2,7 @@
 <div id="signinupModal" class="modal modal-fixed-footer">
 
   <!-- SIGN UP MODAL-->
-  <form ng-if="type === 'Sign Up'" id="signupform" > <!-- action="usersignup" method="post" accept-charset="UTF-8" -->
+  <form ng-if="type === 'Sign Up'" id="signupform" action="usersignup" method="post" accept-charset="UTF-8">
     <div class="modal-content">
       <h4>{{type}}</h4>
       <div class="container">
@@ -52,7 +52,7 @@
   </form>
 
   <!-- LOG IN FORM -->
-  <form ng-if="type === 'Log In'" id="logform" > <!--  action="userlogin" method="post" accept-charset="UTF-8" -->
+  <form ng-if="type === 'Log In'" id="logform" action="userlogin" method="post" accept-charset="UTF-8">
     <div class="modal-content">
       <h4>{{type}}</h4>
 
