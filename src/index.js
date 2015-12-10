@@ -11,12 +11,11 @@ var morgan = require('morgan'); // HTTP request logger
 var session = require('express-session'); // session support
 var flash = require('connect-flash'); // session temp message storage support
 var bodyparser = require('body-parser'); // parses/stores request elements in req.body
+// Miscellaneous requires
+var genuuid = require('uid2'); // generate UUIDs for users' session IDs
 
-// set up user-defined routes
-var routehandler = require('./routes/routehandler');
-
-// TODO: add SQLite database JS accessor
-//var db = require('./db/sqliteaccessor');
+// global array of user session objects. format: [{ user: X, id: X }, ... ]
+var sessions = [];
 
 //////////////////////////////////////////
 // Express app and middleware setup/config
@@ -56,25 +55,55 @@ app.use(bodyparser.urlencoded({
 	extended: true 
 }));
 
-// set up custom route handling
-app.use('/', routehandler);
-
 // set up session support
 // @see express-session npm package
-app.use(session({
+app.use('/userlogin', session({
 	genid: function(req) {
-		return genuuid(); // UUIDs will be used for session IDs
+		console.log('index.js: express-session genid function called');
+		return genuuid(64); // UUIDs will be used for session IDs
 	},
-	secret: '238620496820',
+	secret: '23862235709283689420496820',
 	saveUninitialized: false,
 	resave: false,
 	rolling: true,
 	unset: 'destroy',
 	cookie: {
 		secure: false,
-		maxAge: null, // cookie is a "session cookie" and expires when browser is closed
+		maxAge: null // cookie is a "session cookie" and expires when browser is closed
 	}
 }));
+
+var addLoggedInUser = function(useridpair) {
+	sessions.push(useridpair);
+}
+
+/*
+Returns the username corresponding to the given session ID
+Returns sessionId's corresponding user if the user is logged in
+Returns undefined if sessionId does not correspond to a valid logged in user
+*/
+var getUsername = function(sessionId) {
+	for (var i = 0; i < sessions.length; i++) {
+		if (sessions[i].id === sessionId) {
+			return sessions[i].user;
+		}
+	}
+	return undefined;
+}
+
+/*
+Returns the session ID corresponding to the given username.
+Returns username's session ID if user is logged in
+Returns undefined if username is not logged in and lacks valid session ID
+*/
+var getSessionId = function(username) {
+	for (var i = 0; i < sessions.length; i++) {
+		if (sessions[i].user === username) {
+			return sessions[i].id;
+		}
+	}
+	return undefined;
+}
 
 // TODO: set up flash support
 // when enabled, all reqs have req.flash(); sends temp msgs via sessions
@@ -96,10 +125,16 @@ module.exports = {
 	app : app,
 	server : server,
 	io : socketioinstance,
-	env : currenv
+	env : currenv,
+	addLoggedInUser : addLoggedInUser,
+	getUsername : getUsername,
+	getSessionId : getSessionId
 };
 
-// setup socket.io connection handler/socket event handlers
+// set up custom route handling; must be run after exports are defined
+var routehandler = require('./routes/routehandler');
+app.use('/', routehandler);
+// set up socket.io connection handler/socket event handlers
 // sockethandler.js will modify the exported 'io' socket.io instance to
 //  add socket connection and event handlers
 var socketio = require('./sockets/sockethandler');

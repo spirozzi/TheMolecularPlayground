@@ -11,17 +11,11 @@ var ReadWriteLock = require('rwlock');
 var lock = new ReadWriteLock();
 
 // create a new Database object and open the db for create/read/write operations
-var db = new sqlite3.Database(DB_FILE, 
-	sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
-	function(err) {
-		if (err !== null) {
-			// database could not be opened
-			console.log('error: the SQLite3 database could not be created and/or opened, exiting');
-			process.exit(1);
-		}
-	});
+var db;
 // the uid that will be assigned to the next user added to the database
 var nextuid;
+// uid used to log users in
+var uid;
 
 /*
 Asynchronously creates any missing tables in the database to initialize it. If 
@@ -31,14 +25,35 @@ Asynchronously creates any missing tables in the database to initialize it. If
 var initialize = function(cb) {
 	try {
 		var dbstats = fs.lstatSync(DB_FILE);
-		if (!dbstats.isFile()) {
-			// create database file and tables if it does not already exist
-			createTables(cb);
+		if (dbstats.isFile()) {
+			// create database file and tables if db does not already exist
+			if (db === undefined) {
+				db = new sqlite3.Database(DB_FILE, 
+					sqlite3.OPEN_READWRITE,
+					function(err) {
+						if (err !== null) {
+							// database could not be opened
+							console.log('error: the SQLite3 database could not be created and/or opened, exiting');
+							process.exit(1);
+						}
+					});
+				cb(null);
+			} else {
+				cb(null);
+			}
 		}
 	} catch (e) {
-		console.log('error: database existence check failed, exiting');
-		console.log(e);
-		process.exit(1);
+		// file does not exist
+		db = new sqlite3.Database(DB_FILE, 
+			sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
+			function(err) {
+				if (err !== null) {
+					// database could not be opened
+					console.log('error: the SQLite3 database could not be created and/or opened, exiting');
+					process.exit(1);
+				}
+			});
+		createTables(cb);
 	}
 };
 
@@ -81,29 +96,34 @@ var addUser = function(user, cb) {
 	});
 };
 
+/*
+Logs the specified user in if the specified username/password references a 
+ valid user in the database.
+ Invokes the callback with null if the user exists, otherwise the callback is 
+ invoked with a string specifying the error that occurred.
+*/
 var logUserIn = function(user, cb) {
 	var username = user.getUsername();
 	var password = user.getPassword();
 	// get uid of user
-	var uid;
-	var setUid = function(val) {
-		uid = val;
-	};
-	lock.writeLock(function(release) {
-		getUserUid(username, setUid)
-		release();
-	});
-	lock.writeLock(function(release) {
+	getUserUid(username, password);
+	console.log('dbaccessor.logUserIn: username=' + username + ' password=' + password);
+	function stopCheck() {
+		clearInterval(checkuid);
+		console.log('dbaccessor.logUserIn: uid checking disabled');
+	}
+	var checkuid = setInterval(function() {
+		console.log('dbaccessor.logUserIn: checking uid...');
 		lock.readLock(function(release) {
-			if (uid === undefined) {
-				cb('user does not exist');
-			} else {
-
+			if (uid && uid !== null) {
+				stopCheck();
+				cb(null);
+			} else if (uid === null) {
+				cb('error: specified username and password does not exist');
 			}
 			release();
 		});
-		release();
-	});
+	}, 50);
 };
 
 /* 
@@ -113,48 +133,37 @@ Asynchronously closes the database connection. If the database is successfully
  @params cb	A function with one parameter 
 */
 var close = function(cb) {
-	lock.writeLock(function(release) {
-		db.serialize(function() {
-			lock.writeLock(function(release) {
-				db.close(cb);
-				release();
-			});
-		});
-		release();
-	});
+	db.close(cb);
 };
 
-function getUserUid(uid, cbSetUid) {
-	lock.writeLock(function(release) {
-		db.serialize(function() {
-			lock.writeLock(function(release) {
-				db.get('SELECT * FROM users WHERE uid=$uid',
-					{ $uid: uid },
-					function(err, row) {
-						lock.writeLock(function(release) {
-							if (row !== undefined) {
-								// row containing user with specified uid found
-								cbSetUid(row.uid);
-							} else if (err === null) {
-								// no user with specified uid found and no error
-								cbSetUid(undefined);
-							} else {
-								// error
-								console.log('error: failed to query db to find user with specified uid');
-								console.log(err);
-							}
-							release();
-						});
-					});
-				release();
+function getUserUid(username, password) {
+	db.serialize(function() {
+		db.get("SELECT * FROM users WHERE username=$username AND password=$password",
+			{ $username: username, $password: password },
+			function(err, row) {
+				lock.writeLock(function(release) {
+					if (row !== undefined) {
+						// row containing user with specified username and password found
+						console.log('dbaccessor.getUserUid: username found');
+						setUid(row.uid);
+						console.log('dbaccessor.getUserUid: set uid to ' + uid);
+					} else if (err === null) {
+						// no user with specified uid found, but and no error
+						setUid(null);
+					} else {
+						// error
+						console.log('error: failed to query db find user with specified username and password');
+						console.log(err);
+					}
+					release();
+				});
 			});
-		});
-		release();
 	});
 }
 
 function createTables(cb) {
 	db.serialize(function() {
+		console.log("Creating tables in database...")
 		db.run('CREATE TABLE users (\
 			uid INTEGER PRIMARY KEY NOT NULL,\
 			firstname TEXT NOT NULL,\
@@ -203,6 +212,10 @@ function generateNextUid() {
 
 function setNextUid(uid) {
 	nextuid = uid;
+}
+
+function setUid(newuid) {
+	uid = newuid;
 }
 
 module.exports = {
