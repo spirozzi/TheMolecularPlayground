@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="/lib/socketio/socket.io-1.3.7.js"></script>
+	<script src="/lib/jquery/jquery-2.1.4.min.js"></script>
+	<script src="/clientjs/upload_client.js"></script>
+</head>
+<body>
+	<h1>Molecule Upload Page</h1>
+	<h2>Click "Select File..." to choose a molecule to upload.</h2>
+	<h3>Supported file types: *.ent, *.gz, *.zip, *.pdb, *.cif, *.xml, *.txt</h3>
+	<br>
+	<input name="selectfile" type="button" value="Select File...">
+	<input name="removefile" type="button" value="Remove File" disabled>
+	<br>
+	<p id="filenamedisplay">Filename: no file selected</p>
+	<br>
+	<input name="uploadbutton" type="button" value="Upload">
+	<br>
+	<p id="uploadstatus">File has not been uploaded yet</p>
+	<input name="filecontainer" type="file" style="display:none" accept=".ent, .gz, .pdb, .cif, .xml, .txt">
+</body>
+</html>

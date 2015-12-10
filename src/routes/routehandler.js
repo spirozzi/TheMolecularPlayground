@@ -27,6 +27,14 @@ router.get('/index', function(req, res) {
 	res.render('index');
 });
 
+router.get('/upload', function(req, res) {
+    res.render('upload');
+});
+
+////////////////////////////////////////////////////
+// Route handlers for sign up/login form submissions
+////////////////////////////////////////////////////
+
 router.post('/usersignup', function(req, res) {
     var firstname = req.body.firstname;
     var lastname = req.body.lastname;
@@ -79,12 +87,13 @@ router.post('/userlogin', function(req, res) {
         if (err !== null) {
             console.log('routehander.js: could not log user in');
             console.log(err);
+            req.session.destroy(function(err) {
+                if (err) {
+                    console.log('routehandler.js: could not destroy session');
+                }
+            });
             res.render('error', { message: 'Error: Could not log in'});
         } else {
-            if (!req.sessionID) {
-                console.log('routehandler.js: could not log user in, session ID undefined, exiting');
-                process.exit(1);
-            }
             mainapp.addLoggedInUser({
                 user: username,
                 id: req.sessionID
@@ -92,6 +101,18 @@ router.post('/userlogin', function(req, res) {
             res.redirect('index');
         }
     });
+});
+
+///////////////////////////////////
+// Route handlers for ajax requests
+///////////////////////////////////
+
+router.post('/isuserloggedin', function(req, res) {
+
+});
+
+router.post('/getuserpermissionlevel', function(req, res) {
+    
 });
 
 //////////////////////////////////////////////
