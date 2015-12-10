@@ -29,8 +29,26 @@
 	<meta name="msapplication-TileImage" content="/mstile-144x144.png">
 	<meta name="theme-color" content="#ffffff">
 
+
+	<script type="text/javascript">
+		var Info = {
+			width: 450,
+			height: 450,
+			color: "black",
+			j2sPath: "lib/jsmol/j2s",
+			addSelectionOptions: false,
+			serverURL: "http://chemapps.stolaf.edu/jmol/jsmol/jsmol.php",
+			src: "jsmol/test2.mol",
+			readyFunction: null,
+			console: "jmol_infodiv",
+			disableInitialConsole: true,
+			defaultModel: null,
+			debug: false
+		};
+
+	</script>
 </head>
-<body class="blue-grey lighten-4">
+<body class="blue-grey lighten-4" ng-controller="masterCntrl as master">
 	<!-- All the content we need, should be intuitive. Otherwise talk to Carter, angularJS does make some odd DOM pages -->
 
 	<navbar></navbar> <!-- the nav menu -->
@@ -46,11 +64,22 @@
 <script type="text/javascript" src="controllers/contentCntrl.js"></script>
 
 <script type="text/javascript" src="clientjs/index_client.js"></script>
+
+<script type="text/javascript" src="lib/jsmol/JSmol.lite.nojq.js"></script>
+
 <script type="text/javascript">
 	$(document).ready(function(){
 		// the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
 		$('.modal-trigger').leanModal();
 	});
 </script>
+
+<div id="jmolPrev" onafterprint="console.log('jmol');">
+
+<script type="text/javascript">
+  jmol = Jmol.getTMApplet("jmol", Info);
+	//jmol = Jmol.getTMApplet("jmol", Info);
+</script>
+
 </body>
 </html>
