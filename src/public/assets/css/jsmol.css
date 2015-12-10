@@ -1,0 +1,10 @@
+#jmolPrev{
+  position:absolute;
+  top:12em;
+  right:11em;
+  height:500px;
+  width:600px;
+}
+#jmol_appletdiv{
+  z-index: 50 !important;
+}
