@@ -14,11 +14,13 @@ var lock = new ReadWriteLock();
 // set by initialize()
 var db;
 // the uid that will be assigned to the next user added to the db.
-// set/accessed by generateNextUid()
+// set/accessed by addUser() and generateNextUid()
 var nextuid;
-// uid used to log users in, set/accessed by getUserUid()
+// uid used to log users in
+// set/accessed by logUserIn() and getUserUid()
 var uid;
-// permission level of requested user, set/accessed by getPermissionLevel()
+// permission level of requested user
+// set/accessed by getPermissionLevel() and queryPermissionLevel()
 var permissionlevel;
 
 /*
@@ -112,25 +114,48 @@ var logUserIn = function(user, cb) {
 	var password = user.getPassword();
 	// get uid of user
 	getUserUid(username, password);
-	function stopCheck() {
+	function stopUidCheck() {
 		clearInterval(checkuid);
 	}
 	var checkuid = setInterval(function() {
 		lock.readLock(function(release) {
 			if (uid && uid !== null) {
-				stopCheck();
+				stopUidCheck();
+				setUid(undefined);
 				cb(null);
 			} else if (uid === null) {
-				cb('error: specified username and password does not exist');
+				setUid(undefined);
+				cb('error: could not log user in, specified user does not exist');
 			}
 			release();
 		});
 	}, 50);
 };
 
+/*
+Gets the permission level of the given username. If successful, cb is called 
+ as cb(null, permissionlevel), otherwise cb is called as cb(errmsg, undefined).
+*/
 var getPermissionLevel = function(username, cb) {
-
-}
+	queryPermissionLevel(username);
+	function stopPermissionCheck() {
+		clearInterval(checkpermission);
+	}
+	var checkpermission = setInterval(function() {
+		lock.readLock(function(release) {
+			if (permissionlevel && permissionlevel !== null) {
+				stopPermissionCheck();
+				var tempPermission = permissionlevel;
+				setPermissionLevel(undefined);
+				cb(null, tempPermission);
+			} else if (permissionlevel === null) {
+				setPermissionLevel(undefined);
+				cb('error: could not get permission level for specified username', undefined);
+			}
+			release();
+		});
+	}, 50);
+};
 
 /*
 Asynchronously closes the database connection. If the database is successfully
@@ -144,7 +169,6 @@ var close = function(cb) {
 
 function createTables(cb) {
 	db.serialize(function() {
-		console.log("Creating tables in database...")
 		db.run('CREATE TABLE users (\
 			uid INTEGER PRIMARY KEY NOT NULL,\
 			firstname TEXT NOT NULL,\
@@ -170,15 +194,38 @@ function getUserUid(username, password) {
 				lock.writeLock(function(release) {
 					if (row !== undefined) {
 						// row containing user with specified username and password found
-						console.log('dbaccessor.getUserUid: username found');
 						setUid(row.uid);
-						console.log('dbaccessor.getUserUid: set uid to ' + uid);
 					} else if (err === null) {
-						// no user with specified uid found, but and no error
+						// no user with specified uid found, but no error
 						setUid(null);
 					} else {
 						// error
+						setUid(null);
 						console.log('dbaccessor.getUserUid: failed to find user in db with specified username and password');
+						console.log(err);
+					}
+					release();
+				});
+			});
+	});
+}
+
+function queryPermissionLevel(username) {
+	db.serialize(function() {
+		db.get("SELECT * FROM users WHERE username=$username",
+			{ $username: username },
+			function(err, row) {
+				lock.writeLock(function(release) {
+					if (row !== undefined) {
+						// row containing user with specified username found
+						setPermissionLevel(row.permissionlevel);
+					} else if (err === null) {
+						// no user with specified username found, but no error
+						setPermissionLevel(null);
+					} else {
+						// error
+						setPermissionLevel(null);
+						console.log('dbaccessor.queryPermissionLevel: failed to find user in db with specified username');
 						console.log(err);
 					}
 					release();
