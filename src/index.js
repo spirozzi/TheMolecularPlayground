@@ -9,7 +9,6 @@ var express	= require('express');
 var path = require('path'); // join file path strings
 var morgan = require('morgan'); // HTTP request logger
 var session = require('express-session'); // session support
-var flash = require('connect-flash'); // session temp message storage support
 var bodyparser = require('body-parser'); // parses/stores request elements in req.body
 // Miscellaneous requires
 var genuuid = require('uid2'); // generate UUIDs for users' session IDs
@@ -75,40 +74,20 @@ app.use('/userlogin', session({
 
 var addLoggedInUser = function(useridpair) {
 	sessions.push(useridpair);
-}
+};
 
 /*
-Returns the username corresponding to the given session ID
-Returns sessionId's corresponding user if the user is logged in
-Returns undefined if sessionId does not correspond to a valid logged in user
+Returns true if there is a logged in user with a session ID equal to the 
+ sessionid argument. Returns false otherwise.
 */
-var getUsername = function(sessionId) {
+var hasSessionId = function(sessionid) {
 	for (var i = 0; i < sessions.length; i++) {
-		if (sessions[i].id === sessionId) {
-			return sessions[i].user;
+		if (sessions[i].id === sessionid) {
+			return true;
 		}
 	}
-	return undefined;
-}
-
-/*
-Returns the session ID corresponding to the given username.
-Returns username's session ID if user is logged in
-Returns undefined if username is not logged in and lacks valid session ID
-*/
-var getSessionId = function(username) {
-	for (var i = 0; i < sessions.length; i++) {
-		if (sessions[i].user === username) {
-			return sessions[i].id;
-		}
-	}
-	return undefined;
-}
-
-// TODO: set up flash support
-// when enabled, all reqs have req.flash(); sends temp msgs via sessions
-// @see connect-flash npm package
-//app.use(flash());
+	return false;
+};
 
 //////////////////////
 // Server startup code
@@ -127,8 +106,7 @@ module.exports = {
 	io : socketioinstance,
 	env : currenv,
 	addLoggedInUser : addLoggedInUser,
-	getUsername : getUsername,
-	getSessionId : getSessionId
+	hasSessionId : hasSessionId
 };
 
 // set up custom route handling; must be run after exports are defined

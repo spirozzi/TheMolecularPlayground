@@ -69,8 +69,6 @@ $(document).ready(function() {
 			};
 			reader.readAsBinaryString(filepath);
 		}
-		// programmatically click "Remove File" button
-		$("input[type='button'][name='removefile']").click();
 		// update status
 		$('#uploadstatus').text('Uploading...');
 	});
