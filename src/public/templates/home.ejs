@@ -2,30 +2,38 @@
   <div class="row">
     <div class="col m12">
       <div class="row white">
-        <div class="col m10 offset-m1 btn-holder">
-          <div class="card card-btn z-depth-2" align="center">
-            <h3>Content Author Page</h3>
-            <h6>Create and submit new content for approval.</h6>
+        <a ng-click="handleNavigation('Content Author')">
+          <div class="col m10 offset-m1">
+              <div class="card card-btn z-depth-2" align="center">
+                <h3>Content Author Page</h3>
+                <h6>Create and submit new content for approval.</h6>
+              </div>
           </div>
-        </div>
-        <div class="col m10 offset-m1 btn-holder">
-          <div class="card card-btn z-depth-2" align="center">
-            <h3>Playground Management</h3>
-            <h6>Schedule playlists, pick default playlist, and create new playlists.</h6>
+        </a>
+        <a ng-click="handleNavigation('Playground Management')">
+          <div class="col m10 offset-m1">
+            <div class="card card-btn z-depth-2" align="center">
+              <h3>Playground Management</h3>
+              <h6>Schedule playlists, pick default playlist, and create new playlists.</h6>
+            </div>
           </div>
-        </div>
-        <div class="col m10 offset-m1 btn-holder">
-          <div class="card card-btn z-depth-2" align="center">
-            <h3>Global Management</h3>
-            <h6>Review new content submissions, and oversee local managers.</h6>
+        </a>
+        <a ng-click="handleNavigation('Global Management')">
+          <div class="col m10 offset-m1">
+            <div class="card card-btn z-depth-2" align="center">
+              <h3>Global Management</h3>
+              <h6>Review new content submissions, and oversee local managers.</h6>
+            </div>
           </div>
-        </div>
-        <div class="col m10 offset-m1 btn-holder">
-          <div class="card card-btn z-depth-2" align="center">
-            <h3>Playlist Creation Tool</h3>
-            <h6>Create new playlists.</h6>
+        </a>
+        <a ng-click="handleNavigation('Playlist Creation')">
+          <div class="col m10 offset-m1">
+            <div class="card card-btn z-depth-2" align="center">
+              <h3>Playlist Creation Tool</h3>
+              <h6>Create new playlists.</h6>
+            </div>
           </div>
-        </div>
+        </a>
       </div>
     </div>
   </div>

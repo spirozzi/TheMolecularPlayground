@@ -1,7 +1,7 @@
 (function() {
 
   var app = angular.module('app', [
-    'nav','content','jmol'
+    'nav','content','jmol','users'
   ])
 
   app.controller('masterCntrl', ['$rootScope','$scope', function($rootScope,$scope) {

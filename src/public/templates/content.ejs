@@ -1,3 +1,9 @@
 <gallery ng-if="!logged_in || (logged_in && view == 'Gallery')"></gallery>
 <home ng-if="logged_in && view == 'Home'"></home>
 <account ng-if="logged_in && view == 'Account'"></account>
+
+<content-author ng-if="logged_in && view == 'Content Author'"></content-author>
+<playground-management ng-if="logged_in && view == 'Playground Management'"></playground-management>
+
+<global-management ng-if="logged_in && view == 'Global Management'"></global-management>
+<playlist-creation ng-if="logged_in && view == 'Playlist Creation'"></playlist-creation>

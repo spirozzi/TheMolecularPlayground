@@ -3,6 +3,8 @@
 <head>
 	<title>The Molecular Playground - Home Page</title>
 	<link rel="stylesheet" href="lib/materialize/css/materialize.css"></link>
+	<link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link rel="stylesheet" href="assets/css/content.css"></link>
 	<link rel="stylesheet" href="assets/css/nav.css"></link>
 	<link rel="stylesheet" href="assets/css/home.css"></link>
 	<link rel="stylesheet" href="assets/css/jsmol.css"></link>
@@ -36,7 +38,7 @@
 	<script type="text/javascript" src="lib/jsmol/JSmol.min.nojq.js"></script>
 
 </head>
-<body class="blue-grey lighten-4" ng-controller="masterCntrl as master">
+<body class="blue-grey lighten-4" ng-controller="contentCntrl as content">
 	<!-- All the content we need, should be intuitive. Otherwise talk to Carter, angularJS does make some odd DOM pages -->
 
 	<navbar></navbar> <!-- the nav menu -->
@@ -50,6 +52,7 @@
 <script type="text/javascript" src="controllers/navCntrl.js"></script>
 <script type="text/javascript" src="controllers/contentCntrl.js"></script>
 <script type="text/javascript" src="controllers/jmolCntrl.js"></script>
+<script type="text/javascript" src="controllers/usersCntrl.js"></script>
 
 <script type="text/javascript" src="clientjs/index_client.js"></script>
 
@@ -57,6 +60,7 @@
 	$(document).ready(function(){
 		// the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
 		$('.modal-trigger').leanModal();
+		$('select').material_select();
 	});
 </script>
 
@@ -77,7 +81,7 @@
 		};
 	</script>
 
-	<div id="jmolPrev">
+	<div id="jmolPrev" ng-show="!logged_in || view == 'Gallery' || view == 'Content Author'">
 		<script type="text/javascript">
 			jmol = Jmol.getApplet("jmol", Info);
       Jmol.script(jmol, 'load "jsmol/adderall.mol";' );

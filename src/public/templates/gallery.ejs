@@ -8,6 +8,16 @@
               <h5 >Currently Displaying:<br> <h6 id="molName" class="blue-text">Dextroamphetamine</span></h6>
             </div>
           </div>
+
+          <div class="row no-bottom-margin">
+            <div class="col l5">
+              <div class="input-field black-text">
+                <input id="search" type="search" required ng-model="searchText">
+                <label for="search"><i class="material-icons">search</i></label>
+                </div>
+              </div>
+          </div>
+
           <div class="row">
             <div class="col l5">
 
@@ -20,7 +30,7 @@
                 </thead>
 
                 <tbody>
-                  <tr ng-repeat="mol in jmol.molecules" ng-click="load_model(mol.src)" onclick="load_model(this.getElementsByTagName('td')[0],this.getElementsByTagName('td')[1])">
+                  <tr ng-repeat="mol in jmol.molecules | filter:searchText" ng-click="load_model(mol.src)" onclick="load_model(this.getElementsByTagName('td')[0],this.getElementsByTagName('td')[1])">
                     <td hidden="true">{{mol.src}}</td>
                     <td>{{mol.name}}</td>
                     <td>{{mol.author}}</td>
