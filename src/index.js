@@ -68,6 +68,7 @@ app.use('/userlogin', session({
 	unset: 'destroy',
 	cookie: {
 		secure: false,
+    httpOnly: false,
 		maxAge: null // cookie is a "session cookie" and expires when browser is closed
 	}
 }));
@@ -77,7 +78,7 @@ var addLoggedInUser = function(useridpair) {
 };
 
 /*
-Returns true if there is a logged in user with a session ID equal to the 
+Returns true if there is a logged in user with a session ID equal to the
  sessionid argument. Returns false otherwise.
 */
 var hasSessionId = function(sessionid) {

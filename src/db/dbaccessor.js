@@ -105,8 +105,6 @@ Logs the specified user in if the specified username/password references a
 var logUserIn = function(user, cb) {
 	var username = user.getUsername();
 	var password = user.getPassword();
-	console.log(username)
-	console.log(password)
 	// get uid of user
 	getUserUid(username, password);
 	console.log('dbaccessor.logUserIn: username=' + username + ' password=' + password);
@@ -139,7 +137,6 @@ var close = function(cb) {
 };
 
 function getUserUid(username, password) {
-console.log('sasfasdfasdfasdfasdfdf')
 	db.serialize(function() {
 		db.get("SELECT * FROM users WHERE username=$username AND password=$password",
 			{ $username: username, $password: password },

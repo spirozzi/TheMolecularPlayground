@@ -108,7 +108,8 @@ router.post('/userlogin', function(req, res) {
 
 // precondition: browser has TMP session cookie with session ID
 router.post('/isuserloggedin', function(req, res) {
-	var sessionid = req.sessionID;
+	var sessionid = req.body.sessionID;
+	console.log(req.body.sessionID)
 	res.setHeader('Content-Type', 'application/json');
 	if (mainapp.hasSessionId(sessionid)) {
 		res.send(JSON.stringify({ userloggedin: true }));

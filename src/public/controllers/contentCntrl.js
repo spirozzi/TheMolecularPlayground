@@ -1,12 +1,23 @@
 (function() {
 
-var content = angular.module('content', [])
+var content = angular.module('content', ['ngCookies'])
 
-content.controller('contentCntrl', ['$rootScope','$scope', function($rootScope,$scope) {
-  $rootScope.logged_in = 0;
+content.controller('contentCntrl', ['$rootScope','$scope','$http','$cookies', function($rootScope,$scope,$http,$cookies) {
+
+  $rootScope.is_logged_in = function(){
+      var sid = $cookies.getAll()["connect.sid"];
+      console.log(sid)
+      $http.post("/isuserloggedin",{sessionID:sid}).then(function(response) {
+        console.log(response.data.userloggedin);
+        return response.data.userloggedin;
+      });
+  }
+
+  $rootScope.logged_in = $rootScope.is_logged_in();
   $rootScope.permission_level = 0;
-  
+
   $rootScope.view = "Home"
+
 
 }]);
 
