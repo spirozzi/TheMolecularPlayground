@@ -52,12 +52,11 @@ nav.controller('navCntrl', ['$rootScope','$scope','$http', function($rootScope,$
         close = false;
       }
       if (close){
-        //$rootScope.logged_in = 1;
-
         // Login call
         console.log(fields)
         $http.post("/userlogin",fields).then(function(response) {
-            console.log('user logged in.');
+          console.log('user logged in.');
+          $rootScope.logged_in = 1;
         });
       }
     }
