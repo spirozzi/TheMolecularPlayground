@@ -35,6 +35,7 @@ router.get('/upload', function(req, res) {
 });
 
 router.post('/usersignup', function(req, res) {
+	console.log('routehandler.js: POST /usersignup route invoked');
 	var firstname = req.body.firstname;
 	var lastname = req.body.lastname;
 	var email = req.body.email;
@@ -64,7 +65,7 @@ router.post('/usersignup', function(req, res) {
 });
 
 router.post('/userlogin', function(req, res) {
-	console.log('routehandler.js: post(/userlogin... route invoked');
+	console.log('routehandler.js: POST /userlogin route invoked');
 	var username = req.body.username;
 	var password = req.body.password;
 	if (!username || !password) {
