@@ -67,7 +67,6 @@ router.post('/usersignup', function(req, res) {
 			console.log('Added new user to database');
 		}
 	});
-	res.redirect('index');
 });
 
 
