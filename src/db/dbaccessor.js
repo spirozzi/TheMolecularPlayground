@@ -11,11 +11,15 @@ var ReadWriteLock = require('rwlock');
 var lock = new ReadWriteLock();
 
 // create a new Database object and open the db for create/read/write operations
+// set by initialize()
 var db;
-// the uid that will be assigned to the next user added to the database
+// the uid that will be assigned to the next user added to the db.
+// set/accessed by generateNextUid()
 var nextuid;
-// uid used to log users in
+// uid used to log users in, set/accessed by getUserUid()
 var uid;
+// permission level of requested user, set/accessed by getPermissionLevel()
+var permissionlevel;
 
 /*
 Asynchronously creates any missing tables in the database to initialize it. If
@@ -38,6 +42,7 @@ var initialize = function(cb) {
 					});
 				cb(null);
 			} else {
+				// database already initialized
 				cb(null);
 			}
 		}
@@ -105,17 +110,12 @@ Logs the specified user in if the specified username/password references a
 var logUserIn = function(user, cb) {
 	var username = user.getUsername();
 	var password = user.getPassword();
-	console.log(username)
-	console.log(password)
 	// get uid of user
 	getUserUid(username, password);
-	console.log('dbaccessor.logUserIn: username=' + username + ' password=' + password);
 	function stopCheck() {
 		clearInterval(checkuid);
-		console.log('dbaccessor.logUserIn: uid checking disabled');
 	}
 	var checkuid = setInterval(function() {
-		console.log('dbaccessor.logUserIn: checking uid...');
 		lock.readLock(function(release) {
 			if (uid && uid !== null) {
 				stopCheck();
@@ -128,6 +128,10 @@ var logUserIn = function(user, cb) {
 	}, 50);
 };
 
+var getPermissionLevel = function(username, cb) {
+
+}
+
 /*
 Asynchronously closes the database connection. If the database is successfully
  closed, cb is called with the argument null, otherwise cb is called with a
@@ -138,8 +142,27 @@ var close = function(cb) {
 	db.close(cb);
 };
 
+function createTables(cb) {
+	db.serialize(function() {
+		console.log("Creating tables in database...")
+		db.run('CREATE TABLE users (\
+			uid INTEGER PRIMARY KEY NOT NULL,\
+			firstname TEXT NOT NULL,\
+			lastname TEXT NOT NULL,\
+			email TEXT NOT NULL,\
+			permissionlevel INTEGER NOT NULL,\
+			userkey BLOB,\
+			username TEXT NOT NULL,\
+			phonenumber TEXT NOT NULL,\
+			password TEXT NOT NULL)',
+			[],
+			function(err) {
+				cb(err);
+			});
+	});
+}
+
 function getUserUid(username, password) {
-console.log('sasfasdfasdfasdfasdfdf')
 	db.serialize(function() {
 		db.get("SELECT * FROM users WHERE username=$username AND password=$password",
 			{ $username: username, $password: password },
@@ -160,27 +183,6 @@ console.log('sasfasdfasdfasdfasdfdf')
 					}
 					release();
 				});
-			});
-	});
-	console.log('sasfasdfasdfasdfasdfdf')
-}
-
-function createTables(cb) {
-	db.serialize(function() {
-		console.log("Creating tables in database...")
-		db.run('CREATE TABLE users (\
-			uid INTEGER PRIMARY KEY NOT NULL,\
-			firstname TEXT NOT NULL,\
-			lastname TEXT NOT NULL,\
-			email TEXT NOT NULL,\
-			permissionlevel INTEGER NOT NULL,\
-			userkey BLOB,\
-			username TEXT NOT NULL,\
-			phonenumber TEXT NOT NULL,\
-			password TEXT NOT NULL)',
-			[],
-			function(err) {
-				cb(err);
 			});
 	});
 }
@@ -221,9 +223,14 @@ function setUid(newuid) {
 	uid = newuid;
 }
 
+function setPermissionLevel(level) {
+	permissionlevel = level;
+}
+
 module.exports = {
 	initialize: initialize,
 	addUser: addUser,
 	logUserIn: logUserIn,
+	getPermissionLevel: getPermissionLevel,
 	close: close
 };

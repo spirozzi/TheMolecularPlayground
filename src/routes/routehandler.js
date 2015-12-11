@@ -106,7 +106,10 @@ router.post('/userlogin', function(req, res) {
 // Route handlers for ajax requests
 ///////////////////////////////////
 
-// precondition: browser has TMP session cookie with session ID
+/*
+Precondition:
+ browser has TMP session cookie with session ID
+*/
 router.post('/isuserloggedin', function(req, res) {
 	var sessionid = req.sessionID;
 	res.setHeader('Content-Type', 'application/json');
@@ -117,7 +120,18 @@ router.post('/isuserloggedin', function(req, res) {
 	}
 });
 
+/*
+Preconditions:
+ browser has TMP session cookie with session ID
+ user with session ID is currently logged in
+Sends a JSON response with key 'userpermissionlevel' and an integer value 
+ representing the user's permission level.
+ 1 = Global Manager, 2 = Local Manager, 3 = Delegate, 4 = Content Author
+If t
+*/
 router.post('/getuserpermissionlevel', function(req, res) {
+	var sessionid = req.sessionID;
+
 	//res.setHeader('Content-Type', 'application/json');
     //res.send(JSON.stringify({ a: 1 }));
 });

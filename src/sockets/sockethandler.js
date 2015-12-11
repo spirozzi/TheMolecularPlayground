@@ -19,7 +19,7 @@ socketio.on('connection', function(socket) {
 		// get file data and filename from data argument
 		var buffer = data.file;
 		var filename = data.name;
-		var filepath = process.env.HOME + '/mols/' + filename;
+		var filepath = './public/assets/mols/' + filename;
 		// write file to ~/mols/
 		fs.open(filepath, 'w', 0666, function(err, fd) {
 			if (err) {
