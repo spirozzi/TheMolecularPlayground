@@ -4,6 +4,8 @@
 
 // import Express app and server from main JS file
 var expressapp = require('../index.js');
+// require file system module for saving uploaded files locally
+var fs = require('fs');
 // modify socket.io support to the Express app's (index.js) server
 var socketio = expressapp.io;
 
@@ -14,14 +16,30 @@ var socketio = expressapp.io;
 socketio.on('connection', function(socket) {
 	// Event handlers for sockets
 	socket.on('upload-file', function(data) {
-		// store file in database
-		var filedata = data.file;
-		//db.addContent(filedata)
-		// respond to client with upload status: true=success, false=failure
-		if (filedata) {
-			socket.emit('upload-status', { status: true });
-		} else {
-			socket.emit('upload-status', { status: false });
-		}
+		// store file locally
+		var buffer = data.file;
+		var filename = data.name;
+		var filepath = '../public/assets/mols' + filename;
+
+		fs.open(filepath, 'a', 0755, function(err, fd) {
+			if (err) {
+				console.log('sockethandler.upload-file: error creating new file to save uploaded file');
+				console.log(err);
+				socket.emit('upload-status', { status: false });
+			} else {
+				fs.write(fd, buffer, null, 'Binary', function(err, written, buff) {
+					if (err) {
+						console.log('sockethandler.upload-file: error saving uploaded file');
+						console.log(err);
+						socket.emit('upload-status', { status: false });
+					} else {
+						fs.close(fd, function() {
+							console.log('sockethandler.upload-file: successfully saved file to ' + filepath);
+							socket.emit('upload-status', { status: true });
+						});
+					}
+				});		
+			}
+		});
 	});
 });

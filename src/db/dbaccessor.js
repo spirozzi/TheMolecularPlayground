@@ -26,7 +26,6 @@ var initialize = function(cb) {
 	try {
 		var dbstats = fs.lstatSync(DB_FILE);
 		if (dbstats.isFile()) {
-			// create database file and tables if db does not already exist
 			if (db === undefined) {
 				db = new sqlite3.Database(DB_FILE, 
 					sqlite3.OPEN_READWRITE,
@@ -43,7 +42,8 @@ var initialize = function(cb) {
 			}
 		}
 	} catch (e) {
-		// file does not exist
+		// db file does not exist
+		// create database file and tables if db does not already exist
 		db = new sqlite3.Database(DB_FILE, 
 			sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
 			function(err) {
@@ -152,7 +152,7 @@ function getUserUid(username, password) {
 						setUid(null);
 					} else {
 						// error
-						console.log('error: failed to query db find user with specified username and password');
+						console.log('dbaccessor.getUserUid: failed to find user in db with specified username and password');
 						console.log(err);
 					}
 					release();
@@ -178,7 +178,6 @@ function createTables(cb) {
 			function(err) {
 				cb(err);
 			});
-		// TODO: create other tables
 	});
 }
 
