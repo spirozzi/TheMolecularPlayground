@@ -9,12 +9,6 @@ var db = require('../db/dbaccessor');
 // require User prototype
 var User = require('../db/user');
 
-// TODO: possible https support for server-side responses
-//var https = require('https');
-
-// TODO: require SQLite database JS interface
-//var db = require('../db/databaseaccessor');
-
 ///////////////////////////////////////////////
 // Routing handlers for EJS-rendered HTML pages
 ///////////////////////////////////////////////
@@ -41,6 +35,7 @@ router.get('/upload', function(req, res) {
 });
 
 router.post('/usersignup', function(req, res) {
+	console.log('routehandler.js: POST /usersignup route invoked');
 	var firstname = req.body.firstname;
 	var lastname = req.body.lastname;
 	var email = req.body.email;
@@ -69,10 +64,8 @@ router.post('/usersignup', function(req, res) {
 	});
 });
 
-
-
 router.post('/userlogin', function(req, res) {
-	console.log('routehandler.js: post(/userlogin... route invoked');
+	console.log('routehandler.js: POST /userlogin route invoked');
 	var username = req.body.username;
 	var password = req.body.password;
 	if (!username || !password) {
@@ -98,7 +91,7 @@ router.post('/userlogin', function(req, res) {
 					console.log('routehandler.js: could not destroy session');
 				}
 			});
-			res.render('error', { message: 'Error: Could not log in'});
+			res.render('error', { message: 'Error: Could not log in' });
 		} else {
 			mainapp.addLoggedInUser({
 				user: username,
@@ -115,12 +108,20 @@ router.post('/userlogin', function(req, res) {
 
 // precondition: browser has TMP session cookie with session ID
 router.post('/isuserloggedin', function(req, res) {
-	
+	var sessionid = req.sessionID;
+	res.setHeader('Content-Type', 'application/json');
+	if (mainapp.hasSessionId(sessionid)) {
+		res.send(JSON.stringify({ userloggedin: true }));
+	} else {
+		res.send(JSON.stringify({ userloggedin: false }));
+	}
 });
 
 router.post('/getuserpermissionlevel', function(req, res) {
-	
+	//res.setHeader('Content-Type', 'application/json');
+    //res.send(JSON.stringify({ a: 1 }));
 });
+
 //////////////////////////////////////////////
 // Route handling code for non-existent routes
 //////////////////////////////////////////////

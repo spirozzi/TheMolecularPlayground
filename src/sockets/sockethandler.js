@@ -16,12 +16,12 @@ var socketio = expressapp.io;
 socketio.on('connection', function(socket) {
 	// Event handlers for sockets
 	socket.on('upload-file', function(data) {
-		// store file locally
+		// get file data and filename from data argument
 		var buffer = data.file;
 		var filename = data.name;
-		var filepath = '../public/assets/mols' + filename;
-
-		fs.open(filepath, 'a', 0755, function(err, fd) {
+		var filepath = process.env.HOME + '/mols/' + filename;
+		// write file to ~/mols/
+		fs.open(filepath, 'w', 0666, function(err, fd) {
 			if (err) {
 				console.log('sockethandler.upload-file: error creating new file to save uploaded file');
 				console.log(err);

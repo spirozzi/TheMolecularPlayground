@@ -53,6 +53,7 @@ var initialize = function(cb) {
 				}
 			});
 		createTables(cb);
+		cb(null);
 	}
 };
 
