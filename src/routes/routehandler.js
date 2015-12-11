@@ -40,10 +40,6 @@ router.get('/upload', function(req, res) {
 	res.render('upload');
 });
 
-////////////////////////////////////////////////////
-// Route handlers for sign up/login form submissions
-////////////////////////////////////////////////////
-
 router.post('/usersignup', function(req, res) {
 	var firstname = req.body.firstname;
 	var lastname = req.body.lastname;
@@ -73,6 +69,8 @@ router.post('/usersignup', function(req, res) {
 	});
 	res.redirect('index');
 });
+
+
 
 router.post('/userlogin', function(req, res) {
 	console.log('routehandler.js: post(/userlogin... route invoked');
@@ -124,7 +122,6 @@ router.post('/isuserloggedin', function(req, res) {
 router.post('/getuserpermissionlevel', function(req, res) {
 	
 });
-
 //////////////////////////////////////////////
 // Route handling code for non-existent routes
 //////////////////////////////////////////////

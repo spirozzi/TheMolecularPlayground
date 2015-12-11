@@ -1,8 +1,14 @@
 (function() {
 
   var app = angular.module('app', [
-    'nav','content'
+    'nav','content','jmol','users'
   ])
+
+  app.controller('masterCntrl', ['$rootScope','$scope', function($rootScope,$scope) {
+
+
+  }]);
+
 
   app.directive('content', function() {
     return {

@@ -2,7 +2,24 @@
 
 var nav = angular.module('nav', [])
 
-nav.controller('navCntrl', ['$rootScope','$scope', function($rootScope,$scope) {
+nav.controller('navCntrl', ['$rootScope','$scope','$http', function($rootScope,$scope, $http) {
+
+  this.fields = {
+    firstname: '',
+    lastname: '',
+    email: '',
+    phonenumber: '',
+    username: '',
+    password: ''
+  }
+
+  this.username = 'fsf';
+  this.firstname = '';
+  this.lastname = '';
+  this.email = '';
+  this.phonenumber = '';
+  this.username = '';
+  this.password = '';
 
   var in_links = [
     {text:'Home',action:'link'},
@@ -22,13 +39,42 @@ nav.controller('navCntrl', ['$rootScope','$scope', function($rootScope,$scope) {
     return links;
   };
 
-  $scope.signInUp = function(type){
-    $('#signinupModal').closeModal();
+  this.signInUp = function(fields,type){
+    var close = true;
+
     if (type == 'login'){
-      $rootScope.logged_in = 1;
+      if (fields['username'] === ""){
+        Materialize.toast("Please fill in the username field", 4000) // 4000 is the duration of the toast
+        close = false;
+      }
+      if (fields['password'] === ""){
+        Materialize.toast("Please fill in the password field", 4000) // 4000 is the duration of the toast
+        close = false;
+      }
+      if (close){
+        $rootScope.logged_in = 1;
+        
+        // Login call
+        /*$http.post("/userlogin",fields).then(function(response) {
+          console.log('sdf')
+        });*/
+      }
     }
     else if (type == 'signup'){
+      for(var prop in fields) {
+        if (fields[prop] === ""){
+          Materialize.toast("Please fill in the "+prop+" field", 4000) // 4000 is the duration of the toast
+          close = false;
+        }
+      }
+      if (close){
+        // Add signup call here
+      }
 
+    }
+
+    if (close){
+      $('#signinupModal').closeModal();
     }
   }
 
@@ -51,4 +97,10 @@ nav.controller('navCntrl', ['$rootScope','$scope', function($rootScope,$scope) {
     $('#signinupModal').openModal();
   }
 }]);
+
+nav.directive('signinupmodal', function() {
+  return {
+    templateUrl: 'templates/signInUpModal.ejs'
+  };
+});
 })();

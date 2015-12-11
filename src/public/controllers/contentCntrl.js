@@ -3,8 +3,9 @@
 var content = angular.module('content', [])
 
 content.controller('contentCntrl', ['$rootScope','$scope', function($rootScope,$scope) {
-  $rootScope.logged_in = 1;
+  $rootScope.logged_in = 0;
   $rootScope.view = "Home"
+
 }]);
 
 content.directive('gallery', function() {
@@ -25,10 +26,28 @@ content.directive('account', function() {
     templateUrl: 'templates/account.ejs'
   };
 });
-
-content.directive('signinupmodal', function() {
+content.directive('contentAuthor', function() {
   return {
-    templateUrl: 'templates/signInUpModal.ejs'
+    restrict: 'E',
+    templateUrl: 'templates/contentAuthor.ejs'
+  };
+});
+content.directive('playgroundManagement', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'templates/playgroundManagement.ejs'
+  };
+});
+content.directive('globalManagement', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'templates/globalManagement.ejs'
+  };
+});
+content.directive('playlistCreation', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'templates/playlistCreation.ejs'
   };
 });
 

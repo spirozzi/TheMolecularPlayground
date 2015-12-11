@@ -52,7 +52,7 @@ app.use(express.static('public'));
 // set up the body parser
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({
-	extended: true 
+	extended: true
 }));
 
 // set up session support

@@ -1,8 +1,46 @@
-<div class="container-fuild">
-  <div class="row">
-    <div class="col m12">
-      <div class="row white z-depth-1">
-        <h3>Gallery</h3>
+<div class="container-fuild full_height">
+  <div class="row fill_parent">
+    <div class="col m12 fill_parent">
+      <div id="gallery_content" class="row white z-depth-1 fill_parent">
+        <div class="container">
+          <div class="row">
+            <div class="col l12" style="z-index:51;">
+              <h5 >Currently Displaying:<br> <h6 id="molName" class="blue-text">Dextroamphetamine</span></h6>
+            </div>
+          </div>
+
+          <div class="row no-bottom-margin">
+            <div class="col l5">
+              <div class="input-field black-text">
+                <input id="search" type="search" required ng-model="searchText">
+                <label for="search"><i class="material-icons">search</i></label>
+                </div>
+              </div>
+          </div>
+
+          <div class="row">
+            <div class="col l5">
+
+              <table class="highlight" ng-controller="jmolCntrl as jmol">
+                <thead>
+                  <tr>
+                      <th data-field="id">Name</th>
+                      <th data-field="name">Author</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr ng-repeat="mol in jmol.molecules | filter:searchText" ng-click="load_model(mol.src)" onclick="load_model(this.getElementsByTagName('td')[0],this.getElementsByTagName('td')[1])">
+                    <td hidden="true">{{mol.src}}</td>
+                    <td>{{mol.name}}</td>
+                    <td>{{mol.author}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
 
 
       </div>

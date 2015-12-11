@@ -1,6 +1,6 @@
 // name of database. constant value
 const DB_FILE = '../database.db';
-// require the sqlite3 package and turn on the verbose option to print 
+// require the sqlite3 package and turn on the verbose option to print
 //  detailed stack traces
 var sqlite3 = require('sqlite3').verbose();
 // require the fs package to check if files exist
@@ -18,8 +18,8 @@ var nextuid;
 var uid;
 
 /*
-Asynchronously creates any missing tables in the database to initialize it. If 
- the the database has been initialized sucessfully, cb is called with the 
+Asynchronously creates any missing tables in the database to initialize it. If
+ the the database has been initialized sucessfully, cb is called with the
  argument null, otherwise cb is called with a non-null argument.
 */
 var initialize = function(cb) {
@@ -27,7 +27,7 @@ var initialize = function(cb) {
 		var dbstats = fs.lstatSync(DB_FILE);
 		if (dbstats.isFile()) {
 			if (db === undefined) {
-				db = new sqlite3.Database(DB_FILE, 
+				db = new sqlite3.Database(DB_FILE,
 					sqlite3.OPEN_READWRITE,
 					function(err) {
 						if (err !== null) {
@@ -42,9 +42,8 @@ var initialize = function(cb) {
 			}
 		}
 	} catch (e) {
-		// db file does not exist
-		// create database file and tables if db does not already exist
-		db = new sqlite3.Database(DB_FILE, 
+		// file does not exist
+		db = new sqlite3.Database(DB_FILE,
 			sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
 			function(err) {
 				if (err !== null) {
@@ -74,7 +73,7 @@ var addUser = function(user, cb) {
 				username = user.getUsername();
 				phonenumber = user.getPhoneNumber();
 				password = user.getPassword();
-				db.run('INSERT INTO users VALUES ($nextuid, $firstname, $lastname, $email, $permissionlevel, $userkey, $username, $phonenumber, $password)', 
+				db.run('INSERT INTO users VALUES ($nextuid, $firstname, $lastname, $email, $permissionlevel, $userkey, $username, $phonenumber, $password)',
 					{
 						$nextuid: nextuid,
 						$firstname: firstname,
@@ -97,14 +96,16 @@ var addUser = function(user, cb) {
 };
 
 /*
-Logs the specified user in if the specified username/password references a 
+Logs the specified user in if the specified username/password references a
  valid user in the database.
- Invokes the callback with null if the user exists, otherwise the callback is 
+ Invokes the callback with null if the user exists, otherwise the callback is
  invoked with a string specifying the error that occurred.
 */
 var logUserIn = function(user, cb) {
 	var username = user.getUsername();
 	var password = user.getPassword();
+	console.log(username)
+	console.log(password)
 	// get uid of user
 	getUserUid(username, password);
 	console.log('dbaccessor.logUserIn: username=' + username + ' password=' + password);
@@ -126,17 +127,18 @@ var logUserIn = function(user, cb) {
 	}, 50);
 };
 
-/* 
+/*
 Asynchronously closes the database connection. If the database is successfully
- closed, cb is called with the argument null, otherwise cb is called with a 
+ closed, cb is called with the argument null, otherwise cb is called with a
  non-null argument.
- @params cb	A function with one parameter 
+ @params cb	A function with one parameter
 */
 var close = function(cb) {
 	db.close(cb);
 };
 
 function getUserUid(username, password) {
+console.log('sasfasdfasdfasdfasdfdf')
 	db.serialize(function() {
 		db.get("SELECT * FROM users WHERE username=$username AND password=$password",
 			{ $username: username, $password: password },
@@ -159,6 +161,7 @@ function getUserUid(username, password) {
 				});
 			});
 	});
+	console.log('sasfasdfasdfasdfasdfdf')
 }
 
 function createTables(cb) {
@@ -173,7 +176,7 @@ function createTables(cb) {
 			userkey BLOB,\
 			username TEXT NOT NULL,\
 			phonenumber TEXT NOT NULL,\
-			password TEXT NOT NULL)', 
+			password TEXT NOT NULL)',
 			[],
 			function(err) {
 				cb(err);
