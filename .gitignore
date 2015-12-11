@@ -7,3 +7,5 @@ src/npm-debug.log
 dev-server-out.log
 prod-server-out.log
 npm-debug.log
+database.db
+

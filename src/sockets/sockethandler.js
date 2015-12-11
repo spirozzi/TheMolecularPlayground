@@ -19,8 +19,8 @@ socketio.on('connection', function(socket) {
 		// get file data and filename from data argument
 		var buffer = data.file;
 		var filename = data.name;
-		var filepath = process.env.HOME + '/mols/' + filename;
-		// write file to ~/mols/
+		var filepath = './public/assets/mols/' + filename;
+		// write file to TMP/src/public/assets/mols/ directory
 		fs.open(filepath, 'w', 0666, function(err, fd) {
 			if (err) {
 				console.log('sockethandler.upload-file: error creating new file to save uploaded file');
