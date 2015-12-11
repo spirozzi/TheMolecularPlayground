@@ -13,7 +13,7 @@ nav.controller('navCntrl', ['$rootScope','$scope','$http', function($rootScope,$
     password: ''
   }
 
-  this.username = 'fsf';
+  this.username = '';
   this.firstname = '';
   this.lastname = '';
   this.email = '';
@@ -52,12 +52,13 @@ nav.controller('navCntrl', ['$rootScope','$scope','$http', function($rootScope,$
         close = false;
       }
       if (close){
-        $rootScope.logged_in = 1;
-        
+        //$rootScope.logged_in = 1;
+
         // Login call
-        /*$http.post("/userlogin",fields).then(function(response) {
-          console.log('sdf')
-        });*/
+        console.log(fields)
+        $http.post("/userlogin",fields).then(function(response) {
+            console.log('user logged in.');
+        });
       }
     }
     else if (type == 'signup'){
@@ -68,7 +69,9 @@ nav.controller('navCntrl', ['$rootScope','$scope','$http', function($rootScope,$
         }
       }
       if (close){
-        // Add signup call here
+        $http.post("/usersignup",fields).then(function(response) {
+            console.log('user signed up.');
+        });
       }
 
     }
