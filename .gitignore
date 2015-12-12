@@ -9,3 +9,5 @@ prod-server-out.log
 npm-debug.log
 database.db
 
+
+src/public/assets/*.mol
