@@ -22,42 +22,53 @@
       coordFileName: '',
       animationFileName: '',
       title:'',
-      desc:''
+      desc:'',
+      file:undefined
     };
 
     this.uploadContent = function(){
-      console.log(this.fields);
+      console.log(this.fields.title);
       if (this.fields.coordFilePath === ''){
         Materialize.toast("Please specify a xzy coordnate file", 4000) // 4000 is the duration of the toast
       }
       else{
         console.log('Upload button submit handler invoked');
-
-        cFilePath = $('#cfP').val();
-        aFilePath = $('#afP').val();
+        c = $('#cfP')[0]
 
         // get file data
         var reader = new FileReader();
+        reader.fname = c.files[0].name;
         // function called when file data has been successfully read
+        status = false;
         reader.onload = function(e) {
           console.log("Uploading raw file data");
           var rawfiledata = e.target.result;
-          console.log(rawfiledata);
-          socket.emit('upload-file', { file: rawfiledata, name: this.fields.title });
+          socket.emit('upload-file', { file: rawfiledata, name: reader.fname });
+          socket.on('upload-status', function(data) {
+            var status = data.status
+            if (status){
+              $('#submitContentModal').closeModal();
+            }
+            else{
+              Materialize.toast("Upload failed", 4000) // 4000 is the duration of the toast
+            }
+          });
         };
-        console.log("Reading File "+cFilePath);
+        this.molecules.push({name: reader.fname.substring(0,reader.fname.lastIndexOf('.')), author: 'Team Mufasa', src:"assets/mols/"+reader.fname});
+        
+        reader.readAsBinaryString(c.files[0]);
 
-        reader.readAsBinaryString(cFilePath);
       }
-    }
+    };
 
     this.molecules = [
-      {name:"Dextroamphetamine",author:"Bill Nye",src:"jsmol/adderall.mol"},
-      {name:"Ethanol",author:"Bill Nye",src:"jsmol/ethanal.mol"},
-      {name:"Dopamine",author:"Bill Nye",src:"jsmol/dopamine.mol"},
-      {name:"Methylenedioxyphenethylamine",author:"Bill Nye",src:"jsmol/methylenedioxyphenethylamine.mol"},
-      {name:"Benzene",author:"Bill Nye",src:"jsmol/benzene.mol"}
+      {name:"Dextroamphetamine",author:"Bill Nye",src:"assets/mols/Dextroamphetamine.mol"},
+      {name:"Ethanol",author:"The Irish",src:"assets/mols/Ethanol.mol"},
+      {name:"Dopamine",author:"The Brain",src:"assets/mols/Dopamine.mol"},
+      {name:"Benzene",author:"Some Scientist",src:"assets/mols/Benzene.mol"}
     ];
+
+
 
   }]);
 })();

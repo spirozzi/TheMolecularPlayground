@@ -106,13 +106,9 @@ router.post('/userlogin', function(req, res) {
 // Route handlers for ajax requests
 ///////////////////////////////////
 
-/*
-Precondition:
- browser has TMP session cookie with session ID
-*/
+// precondition: browser has TMP session cookie with session ID
 router.post('/isuserloggedin', function(req, res) {
-	var sessionid = req.body.sessionID;
-	console.log(req.body.sessionID)
+	var sessionid = req.sessionID;
 	res.setHeader('Content-Type', 'application/json');
 	if (mainapp.hasSessionId(sessionid)) {
 		res.send(JSON.stringify({ userloggedin: true }));
@@ -121,34 +117,9 @@ router.post('/isuserloggedin', function(req, res) {
 	}
 });
 
-/*
-Preconditions:
- browser has TMP session cookie with session ID
-Sends a JSON response with key 'permissionlevel' and an integer value
- representing the user's permission level. If the user corresponding to the 
- request's session ID is not logged in or does not exist, the permissionlevel 
- key's value is set to undefined instead of an integer.
-Permission Levels:
- 1 = Global Manager, 2 = Local Manager, 3 = Delegate, 4 = Content Author
-*/
 router.post('/getuserpermissionlevel', function(req, res) {
-	res.setHeader('Content-Type', 'application/json');
-	var username = mainapp.getUsernameFromSessionId(req.sessionID);
-	if (username === null) {
-		// user with specified session ID is either not logged in or does not exist
-    	res.send(JSON.stringify({ permissionlevel: undefined }));
-	} else {
-		db.getPermissionLevel(username, function(err, permissionlevel) {
-			if (err) {
-				// could not get permission level for user
-				console.log('routehander.getuserpermissionlevel: could not retrieve permission level for specified user');
-				console.log(err);
-				res.send(JSON.stringify({ permissionlevel: undefined }));
-			} else {
-				res.send(JSON.stringify({ permissionlevel: permissionlevel }));
-			}
-		});
-	}
+	//res.setHeader('Content-Type', 'application/json');
+    //res.send(JSON.stringify({ a: 1 }));
 });
 
 //////////////////////////////////////////////

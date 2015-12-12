@@ -55,6 +55,8 @@
 <script type="text/javascript" src="controllers/jmolCntrl.js"></script>
 <script type="text/javascript" src="controllers/usersCntrl.js"></script>
 
+<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes.js"></script>
+
 <script type="text/javascript" src="clientjs/index_client.js"></script>
 
 <script type="text/javascript">
@@ -85,7 +87,7 @@
 	<div id="jmolPrev" ng-show="!logged_in || view == 'Gallery' || view == 'Content Author'">
 		<script type="text/javascript">
 			jmol = Jmol.getApplet("jmol", Info);
-      Jmol.script(jmol, 'load "jsmol/adderall.mol";' );
+      Jmol.script(jmol, 'load "assets/mols/Dextroamphetamine.mol";' );
 
 			load_model = function(modelPath,modelName){
 				Jmol.script(jmol, 'load "'+modelPath.innerHTML+'";' );

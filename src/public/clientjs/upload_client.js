@@ -67,6 +67,7 @@ $(document).ready(function() {
 				var rawfiledata = e.target.result;
 				socket.emit('upload-file', { file: rawfiledata, name: filename });
 			};
+			console.log(filepath)
 			reader.readAsBinaryString(filepath);
 		}
 		// update status

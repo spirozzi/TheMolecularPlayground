@@ -70,7 +70,7 @@
             <div class="file-field input-field">
               <div class="btn blue">
                 <span>XYZ Coornate</span>
-                <input type="file" id="cfP">
+                <input type="file" id="cfP" ng-model="jmol.fields.file"  ng-change="jmol.getfile()">
               </div>
               <div class="file-path-wrapper">
                 <input id="test" class="file-path validate" type="text"  ng-model="jmol.fields.coordFilePath" accept=".mol, .txt">
@@ -116,4 +116,7 @@
   	$(document).ready(function(){
   		$('select').material_select();
   	});
+    $("#file").change(function(){
+         console.log('fuck everything');
+       });
   </script>

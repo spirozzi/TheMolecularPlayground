@@ -5,18 +5,19 @@ var content = angular.module('content', ['ngCookies'])
 content.controller('contentCntrl', ['$rootScope','$scope','$http','$cookies', function($rootScope,$scope,$http,$cookies) {
 
   $rootScope.is_logged_in = function(){
-      var sid = $cookies.getAll()["connect.sid"];
-      console.log(sid)
-      $http.post("/isuserloggedin",{sessionID:sid}).then(function(response) {
-        console.log(response.data.userloggedin);
-        return response.data.userloggedin;
-      });
+    var sic = $cookies.getAll()["connect.sid"];
+    var decrypted = CryptoJS.AES.decrypt(sic, "23862235709283689420496820");
+    console.log(decrypted);
+    $http.post("/isuserloggedin",{sessionID:sic}).then(function(response) {
+      console.log(response.data.userloggedin);
+      return response.data.userloggedin;
+    });
   }
 
-  $rootScope.logged_in = $rootScope.is_logged_in();
+  $rootScope.logged_in = 1;
   $rootScope.permission_level = 0;
 
-  $rootScope.view = "Home"
+  $rootScope.view = "Content Author"
 
 
 }]);

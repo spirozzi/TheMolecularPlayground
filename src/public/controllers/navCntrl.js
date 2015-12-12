@@ -57,8 +57,6 @@ nav.controller('navCntrl', ['$rootScope','$scope','$http', function($rootScope,$
         $http.post("/userlogin",fields).then(function(response) {
           console.log('user logged in.');
           $rootScope.logged_in = 1;
-          console.log("response")
-          console.log(response)
         });
       }
     }
@@ -91,13 +89,13 @@ nav.controller('navCntrl', ['$rootScope','$scope','$http', function($rootScope,$
       $rootScope.logged_in = 0;
     }
     else{
-      if (!$rootScope.is_logged_in()){
+      /*if (!$rootScope.is_logged_in()){
         $rootScope.view = "Home";
         $rootScope.logged_in = 0;
       }
-      else{
+      else{*/
         $rootScope.view = text;
-      }
+      //}
     }
   };
 
