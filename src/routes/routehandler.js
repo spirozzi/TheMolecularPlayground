@@ -109,7 +109,7 @@ router.post('/userlogin', function(req, res) {
 Precondition:
  browser has TMP session cookie with session ID
 */
-router.post('/isuserloggedin', function(req, res) {
+router.get('/isuserloggedin', function(req, res) {
 	res.setHeader('Content-Type', 'application/json');
 	if (typeof req.session.username === 'undefined') {
 		console.log('route: /isuserloggedin: req.session.username is undefined');
@@ -132,7 +132,7 @@ Sends a JSON response with key 'permissionlevel' and an integer value
 Permission Levels:
  1 = Global Manager, 2 = Local Manager, 3 = Delegate, 4 = Content Author
 */
-router.post('/getuserpermissionlevel', function(req, res) {
+router.get('/getuserpermissionlevel', function(req, res) {
 	res.setHeader('Content-Type', 'application/json');
 	if (typeof req.session.username === 'undefined') {
 		console.log('route: /getuserpermissionlevel: req.session.username is undefined');
