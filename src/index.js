@@ -13,8 +13,8 @@ var bodyparser = require('body-parser'); // parses/stores request elements in re
 // Miscellaneous requires
 var genuuid = require('uid2'); // generate UUIDs for users' session IDs
 
-// global array of user session objects. format: [{ user: X, id: X }, ... ]
-var sessions = [];
+// global array of logged in username strings
+var users = [];
 
 //////////////////////////////////////////
 // Express app and middleware setup/config
@@ -72,34 +72,17 @@ app.use('/userlogin', session({
 	}
 }));
 
-var addLoggedInUser = function(useridpair) {
-	sessions.push(useridpair);
+var addLoggedInUser = function(username) {
+	users.push(username);
 };
 
-/*
-Returns true if there is a logged in user with a session ID equal to the 
- sessionid argument. Returns false otherwise.
-*/
-var hasSessionId = function(sessionid) {
-	for (var i = 0; i < sessions.length; i++) {
-		if (sessions[i].id === sessionid) {
+var hasLoggedInUser = function(username) {
+	for (var i = 0; i < users.length; i++) {
+		if (users[i] === username) {
 			return true;
 		}
 	}
 	return false;
-};
-
-/*
-Returns the username corresponding to the given session ID. If there is no 
- such username, returns null.
-*/
-var getUsernameFromSessionId = function(sessionid) {
-	for (var i = 0; i < sessions.length; i++) {
-		if (sessions[i].id === sessionid) {
-			return sessions[i].user;
-		}
-	}
-	return null;
 }
 
 //////////////////////
@@ -119,8 +102,7 @@ module.exports = {
 	io: socketioinstance,
 	env: currenv,
 	addLoggedInUser: addLoggedInUser,
-	hasSessionId: hasSessionId,
-	getUsernameFromSessionId, getUsernameFromSessionId
+	hasLoggedInUser: hasLoggedInUser
 };
 
 // set up custom route handling; must be set up after exports are defined and 
