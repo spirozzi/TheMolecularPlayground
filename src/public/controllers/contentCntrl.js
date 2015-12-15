@@ -7,12 +7,11 @@ content.controller('contentCntrl', ['$rootScope','$scope','$http','$cookies', fu
   $rootScope.is_logged_in = function(){
     //var sic = $cookies.getAll()["connect.sid"];
     //console.log(decrypted);
-    $http.post("/isuserloggedin").then(function(response) {
-      console.log("isloggedinResp " + response.data.userloggedin);
-      return response.data.userloggedin;
+    $http.get("/isuserloggedin").then(function(response) {
+
     });
   }
-  $rootScope.newMolecule = "";
+
   $rootScope.logged_in = $rootScope.is_logged_in();
   $rootScope.permission_level = 0;
 
