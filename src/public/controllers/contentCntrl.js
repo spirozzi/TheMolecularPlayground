@@ -7,12 +7,12 @@ content.controller('contentCntrl', ['$rootScope','$scope','$http','$cookies', fu
   $rootScope.is_logged_in = function(){
     //var sic = $cookies.getAll()["connect.sid"];
     //console.log(decrypted);
-    $http.get("/isuserloggedin").then(function(response) {
-
+    $http.get("/isuserloggedin").success(function(response) {
+      console.log(response);
     });
   }
 
-  $rootScope.logged_in = $rootScope.is_logged_in();
+  $rootScope.logged_in = 0;
   $rootScope.permission_level = 0;
 
   $rootScope.view = "Home"
