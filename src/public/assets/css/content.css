@@ -5,3 +5,6 @@
 .no-bottom-margin{
   margin-bottom: 0;
 }
+.trans-text{
+  color:transparent;
+}

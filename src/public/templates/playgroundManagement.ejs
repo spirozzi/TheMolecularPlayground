@@ -31,15 +31,15 @@
             </div>
 
             <tbody>
-              <tr ng-repeat="user in user.users | filter:searchText">
+              <tr ng-repeat="user in users | filter:searchText">
                 <td>{{user.name}}</td>
                 <td>{{user.email}}</td>
                 <td align="center">
                   <i class="material-icons green-text" ng-if="user.status == 'approved'">thumb_up</i>
-                  <i class="material-icons white-text" ng-if="user.status == 'rejected'">thumb_down</i>
+                  <i class="material-icons trans-text" ng-if="user.status == 'rejected'">thumb_down</i>
                   <i class="material-icons red-text" ng-if="user.status == 'rejected'">thumb_down</i>
-                  <i class="material-icons" ng-if="user.status == 'waiting'">thumb_up</i>
-                  <i class="material-icons" ng-if="user.status == 'waiting'">thumb_down</i>
+                  <i class="material-icons black-text" ng-if="user.status == 'waiting'"><a ng-click="updateStatus(user.name,'approved');"> thumb_up</a></i>
+                  <i class="material-icons black-text" ng-if="user.status == 'waiting'"><a ng-click="updateStatus(user.name,'rejected');">thumb_down</a></i>
 
                 </td>
                 <td>
@@ -78,7 +78,7 @@
 
   <div class="fixed-action-btn" style="top: 6em; right: 24px;">
     <a class="btn-floating btn-large red" onclick="$('#submitContentModal').openModal();">
-      <i class="material-icons">file_upload</i>
+      <i class="material-icons">add</i>
     </a>
   </div>
 

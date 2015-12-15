@@ -14,10 +14,10 @@ content.controller('contentCntrl', ['$rootScope','$scope','$http','$cookies', fu
     });
   }
 
-  $rootScope.logged_in = 1;
+  $rootScope.logged_in = 0;
   $rootScope.permission_level = 0;
 
-  $rootScope.view = "Content Author"
+  $rootScope.view = "Home"
 
 
 }]);
