@@ -95,7 +95,7 @@ router.post('/userlogin', function(req, res) {
 		} else {
 			mainapp.addLoggedInUser({
 				user: username,
-				id: req.sessionID
+				id: req.connect.sid
 			});
 			res.redirect('index');
 		}
@@ -111,7 +111,7 @@ Precondition:
  browser has TMP session cookie with session ID
 */
 router.post('/isuserloggedin', function(req, res) {
-	var sessionid = req.sessionID;
+	var sessionid = req.connect.sid;
 	res.setHeader('Content-Type', 'application/json');
 	if (mainapp.hasSessionId(sessionid)) {
 		res.send(JSON.stringify({ userloggedin: true }));
@@ -132,7 +132,7 @@ Permission Levels:
 */
 router.post('/getuserpermissionlevel', function(req, res) {
 	res.setHeader('Content-Type', 'application/json');
-	var username = mainapp.getUsernameFromSessionId(req.sessionID);
+	var username = mainapp.getUsernameFromSessionId(req.connect.sid);
 	if (username === null) {
 		// user with specified session ID is either not logged in or does not exist
     	res.send(JSON.stringify({ permissionlevel: undefined }));
