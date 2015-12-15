@@ -4,7 +4,7 @@
 
   jmol.controller('jmolCntrl', ['$rootScope','$scope', function($rootScope,$scope) {
     var socket = io.connect("http://localhost:3000");
-
+    console.log(this.newMol)
     // set up socket event handlers
     socket.on('upload-status', function(data) {
       if (data.status) {
@@ -27,7 +27,6 @@
     };
 
     this.uploadContent = function(){
-      console.log(this.fields.title);
       if (this.fields.coordFilePath === ''){
         Materialize.toast("Please specify a xzy coordnate file", 4000) // 4000 is the duration of the toast
       }
@@ -38,6 +37,7 @@
         // get file data
         var reader = new FileReader();
         reader.fname = c.files[0].name;
+        reader.newMol = ""
         // function called when file data has been successfully read
         status = false;
         reader.onload = function(e) {
@@ -54,12 +54,15 @@
             }
           });
         };
-        this.molecules.push({name: reader.fname.substring(0,reader.fname.lastIndexOf('.')), author: 'Team Mufasa', src:"assets/mols/"+reader.fname});
-        
+
         reader.readAsBinaryString(c.files[0]);
 
+        newMol = {name: reader.fname.substring(0,reader.fname.lastIndexOf('.')), author: 'Team Mufasa', src:"assets/mols/"+reader.fname}
+        this.molecules.push(newMol);
+        this.$apply;
       }
     };
+
 
     this.molecules = [
       {name:"Dextroamphetamine",author:"Bill Nye",src:"assets/mols/Dextroamphetamine.mol"},

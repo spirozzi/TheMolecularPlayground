@@ -124,8 +124,8 @@ router.post('/isuserloggedin', function(req, res) {
 Preconditions:
  browser has TMP session cookie with session ID
 Sends a JSON response with key 'permissionlevel' and an integer value
- representing the user's permission level. If the user corresponding to the 
- request's session ID is not logged in or does not exist, the permissionlevel 
+ representing the user's permission level. If the user corresponding to the
+ request's session ID is not logged in or does not exist, the permissionlevel
  key's value is set to undefined instead of an integer.
 Permission Levels:
  1 = Global Manager, 2 = Local Manager, 3 = Delegate, 4 = Content Author
