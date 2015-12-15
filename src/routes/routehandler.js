@@ -93,10 +93,9 @@ router.post('/userlogin', function(req, res) {
 			});
 			res.render('error', { message: 'Error: Could not log in' });
 		} else {
-			mainapp.addLoggedInUser({
-				user: username,
-				id: req.connect.sid
-			});
+			req.session.username = username;
+			console.log('routehandler.userlogin: req.session.username: ' + req.session.username);
+			mainapp.addLoggedInUser(req.session.username);
 			res.redirect('index');
 		}
 	});
@@ -111,9 +110,12 @@ Precondition:
  browser has TMP session cookie with session ID
 */
 router.post('/isuserloggedin', function(req, res) {
-	var sessionid = req.connect.sid;
 	res.setHeader('Content-Type', 'application/json');
-	if (mainapp.hasSessionId(sessionid)) {
+	if (typeof req.session.username === 'undefined') {
+		console.log('route: /isuserloggedin: req.session.username is undefined');
+		res.send(JSON.stringify({ userloggedin: false }));
+	} else if (mainapp.hasLoggedInUser(req.session.username)) {
+		console.log('route: /isuserloggedin: req.session.username: ' + req.session.username);
 		res.send(JSON.stringify({ userloggedin: true }));
 	} else {
 		res.send(JSON.stringify({ userloggedin: false }));
@@ -132,12 +134,12 @@ Permission Levels:
 */
 router.post('/getuserpermissionlevel', function(req, res) {
 	res.setHeader('Content-Type', 'application/json');
-	var username = mainapp.getUsernameFromSessionId(req.connect.sid);
-	if (username === null) {
-		// user with specified session ID is either not logged in or does not exist
-    	res.send(JSON.stringify({ permissionlevel: undefined }));
+	if (typeof req.session.username === 'undefined') {
+		console.log('route: /getuserpermissionlevel: req.session.username is undefined');
+		res.send(JSON.stringify({ permissionlevel: undefined }));
 	} else {
-		db.getPermissionLevel(username, function(err, permissionlevel) {
+		var loggedinuser = req.session.username;
+		db.getPermissionLevel(loggedinuser, function(err, permissionlevel) {
 			if (err) {
 				// could not get permission level for user
 				console.log('routehander.getuserpermissionlevel: could not retrieve permission level for specified user');
