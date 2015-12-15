@@ -95,7 +95,7 @@ router.post('/userlogin', function(req, res) {
 		} else {
 			mainapp.addLoggedInUser({
 				user: username,
-				id: req.sessionID
+				id: req.connect.sid
 			});
 			res.redirect('index');
 		}
@@ -106,9 +106,12 @@ router.post('/userlogin', function(req, res) {
 // Route handlers for ajax requests
 ///////////////////////////////////
 
-// precondition: browser has TMP session cookie with session ID
+/*
+Precondition:
+ browser has TMP session cookie with session ID
+*/
 router.post('/isuserloggedin', function(req, res) {
-	var sessionid = req.sessionID;
+	var sessionid = req.connect.sid;
 	res.setHeader('Content-Type', 'application/json');
 	if (mainapp.hasSessionId(sessionid)) {
 		res.send(JSON.stringify({ userloggedin: true }));
@@ -117,9 +120,34 @@ router.post('/isuserloggedin', function(req, res) {
 	}
 });
 
+/*
+Preconditions:
+ browser has TMP session cookie with session ID
+Sends a JSON response with key 'permissionlevel' and an integer value
+ representing the user's permission level. If the user corresponding to the 
+ request's session ID is not logged in or does not exist, the permissionlevel 
+ key's value is set to undefined instead of an integer.
+Permission Levels:
+ 1 = Global Manager, 2 = Local Manager, 3 = Delegate, 4 = Content Author
+*/
 router.post('/getuserpermissionlevel', function(req, res) {
-	//res.setHeader('Content-Type', 'application/json');
-    //res.send(JSON.stringify({ a: 1 }));
+	res.setHeader('Content-Type', 'application/json');
+	var username = mainapp.getUsernameFromSessionId(req.connect.sid);
+	if (username === null) {
+		// user with specified session ID is either not logged in or does not exist
+    	res.send(JSON.stringify({ permissionlevel: undefined }));
+	} else {
+		db.getPermissionLevel(username, function(err, permissionlevel) {
+			if (err) {
+				// could not get permission level for user
+				console.log('routehander.getuserpermissionlevel: could not retrieve permission level for specified user');
+				console.log(err);
+				res.send(JSON.stringify({ permissionlevel: undefined }));
+			} else {
+				res.send(JSON.stringify({ permissionlevel: permissionlevel }));
+			}
+		});
+	}
 });
 
 //////////////////////////////////////////////
