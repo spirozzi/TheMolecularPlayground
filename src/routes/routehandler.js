@@ -1,156 +1,283 @@
-// require the Express web framework
-var express = require('express');
-// create the Router object that handles routing clients' HTTP requests
-var router = express.Router();
-// require main Express server app
-var mainapp = require('../index');
-// require database accessor
-var db = require('../db/dbaccessor');
-// require User prototype
-var User = require('../db/user');
+// name of database. constant value
+const DB_FILE = '../database.db';
+// require the sqlite3 package and turn on the verbose option to print
+//  detailed stack traces
+var sqlite3 = require('sqlite3').verbose();
+// require the fs package to check if files exist
+var fs = require('fs');
+// require the rwlock package to use read/write locks
+var ReadWriteLock = require('rwlock');
+// default read/write lock
+var lock = new ReadWriteLock();
 
-///////////////////////////////////////////////
-// Routing handlers for EJS-rendered HTML pages
-///////////////////////////////////////////////
+// create a new Database object and open the db for create/read/write operations
+// set by initialize()
+var db;
+// the uid that will be assigned to the next user added to the db.
+// set/accessed by addUser() and generateNextUid()
+var nextuid;
+// uid used to log users in
+// set/accessed by logUserIn() and getUserUid()
+var uid;
+// permission level of requested user
+// set/accessed by getPermissionLevel() and queryPermissionLevel()
+var permissionlevel;
 
-router.get('/', function(req, res) {
-	res.redirect('/index');
-});
-
-router.get('/index', function(req, res) {
-	res.render('index');
-});
-
-router.get('/upload', function(req, res) {
-	db.initialize(function(err) {
-		if (err !== null) {
-			console.log('error: could not initialize database, exiting');
-			console.log(err);
-			process.exit(1);
-		} else {
-			console.log('Database initialization successful');
+/*
+Asynchronously creates any missing tables in the database to initialize it. If
+ the the database has been initialized sucessfully, cb is called with the
+ argument null, otherwise cb is called with a non-null argument.
+*/
+var initialize = function(cb) {
+	try {
+		var dbstats = fs.lstatSync(DB_FILE);
+		if (dbstats.isFile()) {
+			if (db === undefined) {
+				db = new sqlite3.Database(DB_FILE,
+					sqlite3.OPEN_READWRITE,
+					function(err) {
+						if (err !== null) {
+							// database could not be opened
+							console.log('error: the SQLite3 database could not be created and/or opened, exiting');
+							process.exit(1);
+						}
+					});
+				cb(null);
+			} else {
+				// database already initialized
+				cb(null);
+			}
 		}
-	});
-	res.render('upload');
-});
-
-router.post('/usersignup', function(req, res) {
-	console.log('routehandler.js: POST /usersignup route invoked');
-	var firstname = req.body.firstname;
-	var lastname = req.body.lastname;
-	var email = req.body.email;
-	var username = req.body.username;
-	var phonenumber = req.body.phonenumber;
-	var password = req.body.password;
-	console.log('Adding new user to database...');
-	var user = new User(firstname, lastname, email, username, phonenumber, password);
-	db.initialize(function(err) {
-		if (err !== null) {
-			console.log('error: could not initialize database, exiting');
-			console.log(err);
-			process.exit(1);
-		} else {
-			console.log('Database initialization successful');
-		}
-	});
-	db.addUser(user, function(err) {
-		if (err !== null) {
-			console.log('error: could not add new user to database, exiting');
-			console.log(err);
-			process.exit(1);
-		} else {
-			console.log('Added new user to database');
-		}
-	});
-});
-
-router.post('/userlogin', function(req, res) {
-	console.log('routehandler.js: POST /userlogin route invoked');
-	var username = req.body.username;
-	var password = req.body.password;
-	if (!username || !password) {
-		console.log('routehander.js: username or password is undefined');
-		res.render('error', { message: 'Error: Could not log in'});
-	}
-	var user = new User(null, null, null, username, null, password);
-	db.initialize(function(err) {
-		if (err !== null) {
-			console.log('error: could not initialize database, exiting');
-			console.log(err);
-			process.exit(1);
-		} else {
-			console.log('Database initialization successful');
-		}
-	});
-	db.logUserIn(user, function (err) {
-		if (err !== null) {
-			console.log('routehander.js: could not log user in');
-			console.log(err);
-			req.session.destroy(function(err) {
-				if (err) {
-					console.log('routehandler.js: could not destroy session');
+	} catch (e) {
+		// file does not exist
+		db = new sqlite3.Database(DB_FILE,
+			sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
+			function(err) {
+				if (err !== null) {
+					// database could not be opened
+					console.log('error: the SQLite3 database could not be created and/or opened, exiting');
+					process.exit(1);
 				}
 			});
-			res.render('error', { message: 'Error: Could not log in' });
-		} else {
-			mainapp.addLoggedInUser({
-				user: username,
-				id: req.sessionID
-			});
-			res.redirect('index');
-		}
-	});
-});
-
-///////////////////////////////////
-// Route handlers for ajax requests
-///////////////////////////////////
-
-// precondition: browser has TMP session cookie with session ID
-router.post('/isuserloggedin', function(req, res) {
-	var sessionid = req.sessionID;
-	res.setHeader('Content-Type', 'application/json');
-	if (mainapp.hasSessionId(sessionid)) {
-		res.send(JSON.stringify({ userloggedin: true }));
-	} else {
-		res.send(JSON.stringify({ userloggedin: false }));
+		createTables(cb);
+		cb(null);
 	}
-});
+};
 
-router.post('/getuserpermissionlevel', function(req, res) {
-	//res.setHeader('Content-Type', 'application/json');
-    //res.send(JSON.stringify({ a: 1 }));
-});
-
-//////////////////////////////////////////////
-// Route handling code for non-existent routes
-//////////////////////////////////////////////
-
-// catch 404s and forward to error handler
-router.use(function(req, res, next) {
-	var err = new Error('404 Not Found');
-	err.status = 404;
-	next(err);
-});
-
-if (mainapp.env === 'development') {
-	// error handler for development; renders error.ejs page with stack trace
-	router.use(function(err, req, res, next) {
-		res.status(err.status || 500);
-		res.render('error', {
-			message: err.message,
-			error: err
+var addUser = function(user, cb) {
+	db.serialize(function() {
+		lock.writeLock(function(release) {
+			// write nextuid variable
+			generateNextUid();
+			release();
+		});
+		lock.writeLock(function(release) {
+			lock.readLock(function(release) {
+				firstname = user.getFirstName();
+				lastname = user.getLastName();
+				email = user.getEmail();
+				permissionlevel = 1;
+				userkey = 'myuserkey';
+				username = user.getUsername();
+				phonenumber = user.getPhoneNumber();
+				password = user.getPassword();
+				db.run('INSERT INTO users VALUES ($nextuid, $firstname, $lastname, $email, $permissionlevel, $userkey, $username, $phonenumber, $password)',
+					{
+						$nextuid: nextuid,
+						$firstname: firstname,
+						$lastname: lastname,
+						$email: email,
+						$permissionlevel: permissionlevel,
+						$userkey: userkey,
+						$username: username,
+						$phonenumber: phonenumber,
+						$password: password
+					},
+					function(err) {
+						cb(err);
+					});
+				release();
+			});
+			release();
 		});
 	});
-} else if (mainapp.env === 'production') {
-	// error handler for production; no stack trace rendered to error.ejs page
-	router.use(function(err, req, res, next) {
-		res.status(err.status || 500);
-		res.render('error', {
-			message: err.message,
-			error: {}
+};
+
+/*
+Logs the specified user in if the specified username/password references a
+ valid user in the database.
+ Invokes the callback with null if the user exists, otherwise the callback is
+ invoked with a string specifying the error that occurred.
+*/
+var logUserIn = function(user, cb) {
+	var username = user.getUsername();
+	var password = user.getPassword();
+	// get uid of user
+	getUserUid(username, password);
+	function stopUidCheck() {
+		clearInterval(checkuid);
+	}
+	var checkuid = setInterval(function() {
+		lock.readLock(function(release) {
+			if (uid && uid !== null) {
+				stopUidCheck();
+				setUid(undefined);
+				cb(null);
+			} else if (uid === null) {
+				setUid(undefined);
+				cb('error: could not log user in, specified user does not exist');
+			}
+			release();
+		});
+	}, 50);
+};
+
+/*
+Gets the permission level of the given username. If successful, cb is called 
+ as cb(null, permissionlevel), otherwise cb is called as cb(errmsg, undefined).
+*/
+var getPermissionLevel = function(username, cb) {
+	queryPermissionLevel(username);
+	function stopPermissionCheck() {
+		clearInterval(checkpermission);
+	}
+	var checkpermission = setInterval(function() {
+		lock.readLock(function(release) {
+			if (permissionlevel && permissionlevel !== null) {
+				stopPermissionCheck();
+				var tempPermission = permissionlevel;
+				setPermissionLevel(undefined);
+				cb(null, tempPermission);
+			} else if (permissionlevel === null) {
+				setPermissionLevel(undefined);
+				cb('error: could not get permission level for specified username', undefined);
+			}
+			release();
+		});
+	}, 50);
+};
+
+/*
+Asynchronously closes the database connection. If the database is successfully
+ closed, cb is called with the argument null, otherwise cb is called with a
+ non-null argument.
+ @params cb	A function with one parameter
+*/
+var close = function(cb) {
+	db.close(cb);
+};
+
+function createTables(cb) {
+	db.serialize(function() {
+		db.run('CREATE TABLE users (\
+			uid INTEGER PRIMARY KEY NOT NULL,\
+			firstname TEXT NOT NULL,\
+			lastname TEXT NOT NULL,\
+			email TEXT NOT NULL,\
+			permissionlevel INTEGER NOT NULL,\
+			userkey BLOB,\
+			username TEXT NOT NULL,\
+			phonenumber TEXT NOT NULL,\
+			password TEXT NOT NULL)',
+			[],
+			function(err) {
+				cb(err);
+			});
+	});
+}
+
+function getUserUid(username, password) {
+	db.serialize(function() {
+		db.get("SELECT * FROM users WHERE username=$username AND password=$password",
+			{ $username: username, $password: password },
+			function(err, row) {
+				lock.writeLock(function(release) {
+					if (row !== undefined) {
+						// row containing user with specified username and password found
+						setUid(row.uid);
+					} else if (err === null) {
+						// no user with specified uid found, but no error
+						setUid(null);
+					} else {
+						// error
+						setUid(null);
+						console.log('dbaccessor.getUserUid: failed to find user in db with specified username and password');
+						console.log(err);
+					}
+					release();
+				});
+			});
+	});
+}
+
+function queryPermissionLevel(username) {
+	db.serialize(function() {
+		db.get("SELECT * FROM users WHERE username=$username",
+			{ $username: username },
+			function(err, row) {
+				lock.writeLock(function(release) {
+					if (row !== undefined) {
+						// row containing user with specified username found
+						setPermissionLevel(row.permissionlevel);
+					} else if (err === null) {
+						// no user with specified username found, but no error
+						setPermissionLevel(null);
+					} else {
+						// error
+						setPermissionLevel(null);
+						console.log('dbaccessor.queryPermissionLevel: failed to find user in db with specified username');
+						console.log(err);
+					}
+					release();
+				});
+			});
+	});
+}
+
+function generateNextUid() {
+	lock.writeLock(function(release) {
+		db.serialize(function() {
+			lock.writeLock(function(release) {
+				db.get('SELECT MAX(uid) FROM users', [], function(err, row) {
+					lock.writeLock(function(release) {
+						if (row !== undefined) {
+							// row with largest uid returned
+							setNextUid(row.uid + 1);
+						} else if (err === null) {
+							// no users in table yet and no error
+							setNextUid(1);
+						} else {
+							// error
+							console.log('error: could not read users database table, exiting');
+							console.log(err);
+							process.exit(1);
+						}
+						release();
+					});
+					release();
+				});
+			});
+			release();
 		});
 	});
 }
 
-module.exports = router;
+function setNextUid(uid) {
+	nextuid = uid;
+}
+
+function setUid(newuid) {
+	uid = newuid;
+}
+
+function setPermissionLevel(level) {
+	permissionlevel = level;
+}
+
+module.exports = {
+	initialize: initialize,
+	addUser: addUser,
+	logUserIn: logUserIn,
+	getPermissionLevel: getPermissionLevel,
+	close: close
+};

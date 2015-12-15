@@ -68,7 +68,6 @@ app.use('/userlogin', session({
 	unset: 'destroy',
 	cookie: {
 		secure: false,
-    httpOnly: false,
 		maxAge: null // cookie is a "session cookie" and expires when browser is closed
 	}
 }));
@@ -78,7 +77,7 @@ var addLoggedInUser = function(useridpair) {
 };
 
 /*
-Returns true if there is a logged in user with a session ID equal to the
+Returns true if there is a logged in user with a session ID equal to the 
  sessionid argument. Returns false otherwise.
 */
 var hasSessionId = function(sessionid) {
@@ -89,6 +88,19 @@ var hasSessionId = function(sessionid) {
 	}
 	return false;
 };
+
+/*
+Returns the username corresponding to the given session ID. If there is no 
+ such username, returns null.
+*/
+var getUsernameFromSessionId = function(sessionid) {
+	for (var i = 0; i < sessions.length; i++) {
+		if (sessions[i].id === sessionid) {
+			return sessions[i].user;
+		}
+	}
+	return null;
+}
 
 //////////////////////
 // Server startup code
@@ -102,15 +114,17 @@ var server = app.listen(3000, function() {
 var socketioinstance = require('socket.io')(server);
 
 module.exports = {
-	app : app,
-	server : server,
-	io : socketioinstance,
-	env : currenv,
-	addLoggedInUser : addLoggedInUser,
-	hasSessionId : hasSessionId
+	app: app,
+	server: server,
+	io: socketioinstance,
+	env: currenv,
+	addLoggedInUser: addLoggedInUser,
+	hasSessionId: hasSessionId,
+	getUsernameFromSessionId, getUsernameFromSessionId
 };
 
-// set up custom route handling; must be run after exports are defined
+// set up custom route handling; must be set up after exports are defined and 
+//  after all other middleware is set up
 var routehandler = require('./routes/routehandler');
 app.use('/', routehandler);
 // set up socket.io connection handler/socket event handlers
