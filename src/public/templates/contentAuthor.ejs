@@ -29,8 +29,8 @@
                   </tr>
                 </thead>
 
-                <tbody>
-                  <tr ng-repeat="mol in jmol.molecules | filter:searchText" ng-click="load_model(mol.src)">
+                <tbody id="molecule_table">
+                  <tr ng-repeat="mol in molecules | filter:searchText" onclick="load_model(this.getElementsByTagName('td')[0],this.getElementsByTagName('td')[1])">
                     <td hidden="true">{{mol.src}}</td>
                     <td>{{mol.name}}</td>
                     <td>{{mol.author}}</td>
@@ -51,12 +51,12 @@
   </div>
 
   <!-- Modal Structure -->
-  <div id="submitContentModal" class="modal modal-fixed-footer" ng-controller="jmolCntrl as jmol">
+  <div id="submitContentModal" class="modal modal-fixed-footer">
     <div class="modal-content">
-      <h4>{{jmol.fields.coordFilePath}}</h4>
+      <h4>{{fields.coordFilePath}}</h4>
       <div class="container">
         <div class="row">
-          <div class="input-field col s12" ng-model="jmol.fileType">
+          <div class="input-field col s12" ng-model="fileType">
             <select>
               <option value="" disabled selected>File Type</option>
               <option value="1">XYZ Coornate</option>
@@ -70,15 +70,15 @@
             <div class="file-field input-field">
               <div class="btn blue">
                 <span>XYZ Coornate</span>
-                <input type="file" id="cfP" ng-model="jmol.fields.file"  ng-change="jmol.getfile()">
+                <input type="file" id="cfP" ng-model="fields.file"  ng-change="getfile()">
               </div>
               <div class="file-path-wrapper">
-                <input id="test" class="file-path validate" type="text"  ng-model="jmol.fields.coordFilePath" accept=".mol, .txt">
+                <input id="test" class="file-path validate" type="text"  ng-model="fields.coordFilePath" accept=".mol, .txt">
               </div>
             </div>
           </div>
         </div>
-        <div class="row" ng-if="jmol.fileType == 2">
+        <div class="row" ng-if="fileType == 2">
           <div class="input-field col l12">
             <div class="file-field input-field">
               <div class="btn blue">
@@ -86,27 +86,27 @@
                 <input type="file" id="afP">
               </div>
               <div class="file-path-wrapper">
-                <input class="file-path validate" type="text" ng-model="jmol.fields.animationFilePath" accept=".mol, .txt">
+                <input class="file-path validate" type="text" ng-model="fields.animationFilePath" accept=".mol, .txt">
               </div>
             </div>
           </div>
         </div>
         <div class="row">
           <div class="input-field col l12">
-            <input id="titleinput" type="text" name="title" ng-model="jmol.fields.title">
+            <input id="titleinput" type="text" name="title" ng-model="fields.title">
             <label for="titleinput">Title</label>
           </div>
         </div>
         <div class="row">
           <div class="input-field col l12">
-            <textarea id="descriptioninput" class="materialize-textarea" name="description" ng-model="jmol.fields.desc"></textarea>
+            <textarea id="descriptioninput" class="materialize-textarea" name="description" ng-model="fields.desc"></textarea>
             <label for="descriptioninput">Description</label>
           </div>
         </div>
       </div>
     </div>
     <div class="modal-footer z-depth-2">
-      <button class="btn waves-effect waves-light blue" ng-click="newMolecule = jmol.uploadContent()">
+      <button class="btn waves-effect waves-light blue" ng-click="uploadContent()">
         Submit
       </button>
     </div>

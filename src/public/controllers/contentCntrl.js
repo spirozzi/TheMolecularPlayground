@@ -5,14 +5,10 @@ var content = angular.module('content', ['ngCookies'])
 content.controller('contentCntrl', ['$rootScope','$scope','$http','$cookies', function($rootScope,$scope,$http,$cookies) {
 
   $rootScope.is_logged_in = function(){
-    //var sic = $cookies.getAll()["connect.sid"];
-    //console.log(decrypted);
-    $http.get("/isuserloggedin").success(function(response) {
-      console.log(response);
-    });
+    return ($cookies.get('curUser') && $cookies.get('curUser').length > 0);
   }
 
-  $rootScope.logged_in = 0;
+  $rootScope.logged_in = $rootScope.is_logged_in();
   $rootScope.permission_level = 0;
 
   $rootScope.view = "Home"
@@ -41,7 +37,8 @@ content.directive('account', function() {
 content.directive('contentAuthor', function() {
   return {
     restrict: 'E',
-    templateUrl: 'templates/contentAuthor.ejs'
+    templateUrl: 'templates/contentAuthor.ejs',
+    controller: 'jmolCntrl as jmol'
   };
 });
 content.directive('playgroundManagement', function() {
@@ -62,5 +59,6 @@ content.directive('playlistCreation', function() {
     templateUrl: 'templates/playlistCreation.ejs'
   };
 });
+
 
 })();

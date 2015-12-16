@@ -2,7 +2,7 @@
 
 var nav = angular.module('nav', [])
 
-nav.controller('navCntrl', ['$rootScope','$scope','$http', function($rootScope,$scope, $http) {
+nav.controller('navCntrl', ['$rootScope','$scope','$http','$cookies', function($rootScope,$scope, $http,$cookies) {
 
   this.fields = {
     firstname: '',
@@ -57,6 +57,7 @@ nav.controller('navCntrl', ['$rootScope','$scope','$http', function($rootScope,$
         $http.post("/userlogin",fields).then(function(response) {
           console.log('user logged in.');
           $rootScope.logged_in = 1;
+          $cookies.put('curUser',fields['username'])
         });
       }
     }
@@ -87,15 +88,10 @@ nav.controller('navCntrl', ['$rootScope','$scope','$http', function($rootScope,$
     else if (text == "Sign Out"){
       $rootScope.view = "Home";
       $rootScope.logged_in = 0;
+      $cookies.remove('curUser')
     }
     else{
-      /*if (!$rootScope.is_logged_in()){
-        $rootScope.view = "Home";
-        $rootScope.logged_in = 0;
-      }
-      else{*/
-        $rootScope.view = text;
-      //}
+      $rootScope.view = text;
     }
   };
 

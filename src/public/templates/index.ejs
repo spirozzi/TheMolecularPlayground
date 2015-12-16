@@ -50,6 +50,7 @@
 <script type="text/javascript" src="lib/angularjs/angular.min.js"></script>
 <script type="text/javascript" src="lib/angularjs/angular-cookies.min.js"></script>
 <script type="text/javascript" src="app.js"></script>
+<script type="text/javascript" src="lib/angularjs/angular-cookies.min.js"></script>
 <script type="text/javascript" src="controllers/navCntrl.js"></script>
 <script type="text/javascript" src="controllers/contentCntrl.js"></script>
 <script type="text/javascript" src="controllers/jmolCntrl.js"></script>
@@ -90,6 +91,7 @@
       Jmol.script(jmol, 'load "assets/mols/Dextroamphetamine.mol";' );
 
 			load_model = function(modelPath,modelName){
+				console.log("l");
 				Jmol.script(jmol, 'load "'+modelPath.innerHTML+'";' );
 				document.getElementById('molName').innerHTML = modelName.innerHTML;
 			}

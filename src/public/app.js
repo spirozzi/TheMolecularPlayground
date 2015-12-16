@@ -1,6 +1,7 @@
 (function() {
 
   var app = angular.module('app', [
+    "ngCookies",
     'nav','content','jmol','users'
   ])
 

@@ -30,7 +30,7 @@
                 </thead>
 
                 <tbody>
-                  <tr ng-repeat="mol in jmol.molecules | filter:searchText" ng-click="load_model(mol.src)" onclick="load_model(this.getElementsByTagName('td')[0],this.getElementsByTagName('td')[1])">
+                  <tr ng-repeat="mol in molecules | filter:searchText" ng-click="load_model(mol.src)" onclick="load_model(this.getElementsByTagName('td')[0],this.getElementsByTagName('td')[1])">
                     <td hidden="true">{{mol.src}}</td>
                     <td>{{mol.name}}</td>
                     <td>{{mol.author}}</td>

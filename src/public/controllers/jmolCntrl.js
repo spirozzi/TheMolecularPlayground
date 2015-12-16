@@ -4,7 +4,7 @@
 
   jmol.controller('jmolCntrl', ['$rootScope','$scope', function($rootScope,$scope) {
     var socket = io.connect("http://localhost:3000");
-    console.log(this.newMol)
+    console.log($rootScope.newMol)
     // set up socket event handlers
     socket.on('upload-status', function(data) {
       if (data.status) {
@@ -13,10 +13,11 @@
         $('#uploadstatus').text('Upload failed. Please try again.');
       }
     });
+    $rootScope.newMol = "";
 
-    this.fileType = 1;
+    $rootScope.fileType = 1;
 
-    this.fields = {
+    $rootScope.fields = {
       coordFilePath: '',
       animationFilePath: '',
       coordFileName: '',
@@ -26,8 +27,8 @@
       file:undefined
     };
 
-    this.uploadContent = function(){
-      if (this.fields.coordFilePath === ''){
+    $rootScope.uploadContent = function(){
+      if ($rootScope.fields.coordFilePath === ''){
         Materialize.toast("Please specify a xzy coordnate file", 4000) // 4000 is the duration of the toast
       }
       else{
@@ -57,14 +58,14 @@
 
         reader.readAsBinaryString(c.files[0]);
 
-        newMol = {name: reader.fname.substring(0,reader.fname.lastIndexOf('.')), author: 'Team Mufasa', src:"assets/mols/"+reader.fname}
-        this.molecules.push(newMol);
-        this.$apply;
+        $rootScope.newMol = {name: reader.fname.substring(0,reader.fname.lastIndexOf('.')), author: 'Team Mufasa', src:"assets/mols/"+reader.fname}
+        $rootScope.molecules.push($rootScope.newMol);
+        console.log($rootScope.molecules);
       }
     };
 
 
-    this.molecules = [
+    $rootScope.molecules = [
       {name:"Dextroamphetamine",author:"Bill Nye",src:"assets/mols/Dextroamphetamine.mol"},
       {name:"Ethanol",author:"The Irish",src:"assets/mols/Ethanol.mol"},
       {name:"Dopamine",author:"The Brain",src:"assets/mols/Dopamine.mol"},
@@ -74,4 +75,10 @@
 
 
   }]);
+  jmol.directive('contentRow', function() {
+    return {
+      restrict: 'E',
+      templateUrl: 'templates/contentRow.ejs'
+    };
+  });
 })();
