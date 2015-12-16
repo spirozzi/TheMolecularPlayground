@@ -91,7 +91,6 @@
       Jmol.script(jmol, 'load "assets/mols/Dextroamphetamine.mol";' );
 
 			load_model = function(modelPath,modelName){
-				console.log("l");
 				Jmol.script(jmol, 'load "'+modelPath.innerHTML+'";' );
 				document.getElementById('molName').innerHTML = modelName.innerHTML;
 			}
