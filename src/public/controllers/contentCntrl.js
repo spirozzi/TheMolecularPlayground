@@ -84,6 +84,16 @@ content.controller('contentCntrl', ['$rootScope','$scope','$http','$cookies', fu
     {name:"Dopamine",author:"The Brain",src:"assets/mols/Dopamine.mol"},
     {name:"Benzene",author:"Some Scientist",src:"assets/mols/Benzene.mol"}
   ];
+  $rootScope.set_file_type = function(){
+    console.log("this is so fucking hard for no fucking reason");
+    console.log($('#filetype').val());
+    $rootScope.fileType = $('#filetype').val();
+  };
+
+  $rootScope.is_animation = function(){
+    console.log($('#filetype').val());
+    return $('#filetype').val() == 2;
+  };
 
 
 }]);
