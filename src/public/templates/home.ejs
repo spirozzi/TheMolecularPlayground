@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col m12">
       <div class="row white">
-        <a ng-click="handleNavigation('Content Author')">
+        <a ng-if="has_perm_level(1)" ng-click="handleNavigation('Content Author')">
           <div class="col m10 offset-m1">
               <div class="card card-btn z-depth-2" align="center">
                 <h3>Content Author Page</h3>
@@ -10,7 +10,7 @@
               </div>
           </div>
         </a>
-        <a ng-click="handleNavigation('Playground Management')">
+        <a ng-if="has_perm_level(3)" ng-click="handleNavigation('Playground Management')">
           <div class="col m10 offset-m1">
             <div class="card card-btn z-depth-2" align="center">
               <h3>Playground Management</h3>
@@ -18,7 +18,7 @@
             </div>
           </div>
         </a>
-        <a ng-click="handleNavigation('Global Management')">
+        <a ng-if="has_perm_level(5)" ng-click="handleNavigation('Global Management')">
           <div class="col m10 offset-m1">
             <div class="card card-btn z-depth-2" align="center">
               <h3>Global Management</h3>
@@ -26,7 +26,7 @@
             </div>
           </div>
         </a>
-        <a ng-click="handleNavigation('Playlist Creation')">
+        <a ng-if="has_perm_level(3)" ng-click="handleNavigation('Playlist Creation')">
           <div class="col m10 offset-m1">
             <div class="card card-btn z-depth-2" align="center">
               <h3>Playlist Creation Tool</h3>

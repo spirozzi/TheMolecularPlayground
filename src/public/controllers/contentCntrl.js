@@ -14,7 +14,7 @@ content.controller('contentCntrl', ['$rootScope','$scope','$http','$cookies', fu
   $rootScope.view = "Home"
 
 
-// jmol stuff 
+// jmol stuff
   var socket = io.connect("http://localhost:3000");
   console.log($rootScope.newMol)
   // set up socket event handlers
@@ -71,7 +71,7 @@ content.controller('contentCntrl', ['$rootScope','$scope','$http','$cookies', fu
 
       reader.readAsBinaryString(c.files[0]);
 
-      $rootScope.newMol = {name: reader.fname.substring(0,reader.fname.lastIndexOf('.')), author: 'Team Mufasa', src:"assets/mols/"+reader.fname}
+      $rootScope.newMol = {name: reader.fname.substring(0,reader.fname.lastIndexOf('.')), author: $cookies.get('curUser'), src:"assets/mols/"+reader.fname}
       $rootScope.molecules.push($rootScope.newMol);
       console.log($rootScope.molecules);
     }

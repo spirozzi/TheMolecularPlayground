@@ -44,21 +44,21 @@
                 </td>
                 <td>
                   <p ng-if="user.editPlaylists">
-                    <input type="checkbox" checked="checked" />
-                    <label for="editPlaylists"></label>
+                    <input type="checkbox" checked="checked" ng-attr-id="{{ 'editPlaylists-' + $index }}"/>
+                    <label ng-attr-for"{{ 'editPlaylists-' + $index }}"/>
                   </p>
                   <p ng-if="!user.editPlaylists">
-                    <input type="checkbox" id="editPlaylistsN$index"/>
-                    <label for="editPlaylistsN"></label>
+                    <input type="checkbox" ng-attr-id="{{ 'editPlaylistsN-' + $index }}"/>
+                    <label ng-attr-for"{{ 'editPlaylistsN-' + $index }}"/>
                   </p>
                 <td>
                   <p ng-if="user.createPlaylists">
-                    <input type="checkbox" id="createPlaylists$index" checked="checked" />
-                    <label for="createPlaylists"></label>
+                    <input type="checkbox" ng-attr-id="{{ 'createPlaylists-' + $index }}" checked="checked" />
+                    <label ng-attr-for"{{ 'createPlaylists-' + $index }}"/>
                   </p>
                   <p ng-if="!user.createPlaylists">
-                    <input type="checkbox" id="createPlaylistsN$index"/>
-                    <label for="createPlaylistsN"></label>
+                    <input type="checkbox" ng-attr-id="{{ 'createPlaylistsN-' + $index }}"/>
+                    <label ng-attr-for"{{ 'createPlaylistsN-' + $index }}"/>
                   </p>
                 </td>
               </tr>

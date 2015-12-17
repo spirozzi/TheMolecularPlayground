@@ -110,6 +110,7 @@ Precondition:
  browser has TMP session cookie with session ID
 */
 router.get('/isuserloggedin', function(req, res) {
+	console.log(req.session.username)
 	res.setHeader('Content-Type', 'application/json');
 	if (typeof req.session.username === 'undefined') {
 		console.log('route: /isuserloggedin: req.session.username is undefined');
@@ -132,20 +133,30 @@ Sends a JSON response with key 'permissionlevel' and an integer value
 Permission Levels:
  1 = Global Manager, 2 = Local Manager, 3 = Delegate, 4 = Content Author
 */
-router.get('/getuserpermissionlevel', function(req, res) {
+router.post('/getuserpermissionlevel', function(req, res) {
+	console.log(req.body.user);
+	console.log(req.user);
+	var userName = req.body.user
 	res.setHeader('Content-Type', 'application/json');
-	if (typeof req.session.username === 'undefined') {
-		console.log('route: /getuserpermissionlevel: req.session.username is undefined');
+	if (typeof userName === 'undefined') {
+		console.log('1');
+		console.log('route: /getuserpermissionlevel: user is undefined');
 		res.send(JSON.stringify({ permissionlevel: undefined }));
 	} else {
-		var loggedinuser = req.session.username;
+		console.log('2');
+		var loggedinuser = userName;
+		console.log('3');
 		db.getPermissionLevel(loggedinuser, function(err, permissionlevel) {
+		console.log('4');
 			if (err) {
+				console.log('3');
 				// could not get permission level for user
 				console.log('routehander.getuserpermissionlevel: could not retrieve permission level for specified user');
 				console.log(err);
+				console.log('4');
 				res.send(JSON.stringify({ permissionlevel: undefined }));
 			} else {
+				console.log('4');
 				res.send(JSON.stringify({ permissionlevel: permissionlevel }));
 			}
 		});

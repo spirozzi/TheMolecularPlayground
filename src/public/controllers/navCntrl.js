@@ -32,6 +32,17 @@ nav.controller('navCntrl', ['$rootScope','$scope','$http','$cookies', function($
     {text:'Log In',action:"openSignInUpModal()"}
   ];
 
+  if(!$cookies.get('userPermLevel')){
+    var expireDate = new Date();
+    expireDate.setDate(expireDate.getDate() + 1);
+    $cookies.put('userPermLevel',1, {'expires': expireDate});
+  }
+
+  $scope.has_perm_level = function(needed){
+    console.log($cookies.get('permLevel')>= needed);
+    return $cookies.get('permLevel') >= needed;
+  }
+
   $rootScope.get_links = function(lin){
     if($rootScope.logged_in) links = in_links;
     else links = out_links;
@@ -57,7 +68,16 @@ nav.controller('navCntrl', ['$rootScope','$scope','$http','$cookies', function($
         $http.post("/userlogin",fields).then(function(response) {
           console.log('user logged in.');
           $rootScope.logged_in = 1;
-          $cookies.put('curUser',fields['username'])
+          $cookies.put('curUser',fields['username']);
+          if (fields['username'] === "admin"){
+            $cookies.put('permLevel',5);
+          }
+          else if(fields['username'] === 'user'){
+            $cookies.put('permLevel',$cookies.get('userPermLevel'));
+          }
+          else{
+            $cookies.put('permLevel',1)
+          }
         });
       }
     }
@@ -82,13 +102,15 @@ nav.controller('navCntrl', ['$rootScope','$scope','$http','$cookies', function($
   }
 
   $scope.handleNavigation = function(text){
+
     if (text == "Sign Up" || text == "Log In"){
       $scope.openSignInUpModal(text);
     }
     else if (text == "Sign Out"){
       $rootScope.view = "Home";
       $rootScope.logged_in = 0;
-      $cookies.remove('curUser')
+      $cookies.remove('curUser');
+      $cookies.remove('permLevel');
     }
     else{
       $rootScope.view = text;
